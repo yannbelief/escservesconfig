@@ -10,7 +10,7 @@ Escape provides a RESTful interface for both the setting and getting of environm
 == URL scheme ==
 
 This is most easily demonstrated by constructing an example URL.
-|| URL || Value returned ||
+|| *URL* || *Value returned* ||
 || {{{http://escape}}}|| User interface. No API available here. ||
 || {{{http://escape/environments/}}} || A list of all the available environments ||
 || {{{http://escape/environments/production/}}} || A list of all the applications in the "production" environment. ||
