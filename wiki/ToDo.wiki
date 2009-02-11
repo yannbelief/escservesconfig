@@ -12,6 +12,15 @@ We are painfully aware that there is no security in Escape at v0.1. Our plans fo
   * Using authentication to allow individuals and groups to 'own' environments and applications;
   * Access-controls to restrict the editing of un-owned values and environments.
 
+== Databases ==
+
+We're using Sequel in the backend. We use SQLite3 for development, but we're planning to do some basic testing with the following databases:
+
+  * PostgresQL
+  * MySQL
+  * Oracle
+
+
 == Client libraries ==
 
 We haven't written a useful client library yet. But we would like to provide:
