@@ -29,3 +29,5 @@ do
 run_installation_on $host
 done
 }}}
+
+Note that the only variable passed to the script is the target environment. This is good practice - we should be using the same install script in all of our environments. That way, we are testing our deployment process during development and we de-risk our deployment to production. 
