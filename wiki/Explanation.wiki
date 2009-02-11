@@ -1,6 +1,4 @@
-= ESCAPE =
-
-ESCAPE Serves Configuration Across Plentiful Environments
+= ESCAPE Serves Configuration Across Plentiful Environments =
 
   * *Define* your environments;
   * *Configure* your software;
@@ -10,8 +8,15 @@ ESCAPE Serves Configuration Across Plentiful Environments
   * *ESCAPE* from configuration Samsara.
 
 
-= Details =
+= Elevator Pitch =
 
-This application exists to help in the development and running of custom applications. It is designed to serve environment-specific configuration to a variety of applications in a multitude of environments. 
+This application exists to help in the development and operation of custom applications. It is designed to serve environment-specific configuration to a variety of applications in a multitude of environments. 
 
 It is particularly useful if your SDLC uses a 'build pipeline' for the promotion of code into production, but this is not a prerequisite.
+
+= Contents =
+
+GlossaryOfTerms
+ApiDocumentation
+UserInterface
+ToDo
