@@ -20,3 +20,5 @@ We haven't written a useful client library yet. But we would like to provide:
   * A jar for java applications and ant;
   * A client in a scripting language, like Python, Ruby, or Perl.
   * A client to do bulk transations on the escape database. (eg: I have moved my DB server from `fred` to `barney`, so I need to change all of my connection strings)
+
+We're hoping though that the REST API is so easy to use you won't really worry about the client libraries anyway...
