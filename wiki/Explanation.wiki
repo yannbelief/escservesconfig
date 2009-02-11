@@ -16,7 +16,7 @@ It is particularly useful if your SDLC uses a 'build pipeline' for the promotion
 
 = Contents =
 
-GlossaryOfTerms
-ApiDocumentation
-UserInterface
-ToDo
+  * GlossaryOfTerms
+  * ApiDocumentation
+  * UserInterface
+  * ToDo
