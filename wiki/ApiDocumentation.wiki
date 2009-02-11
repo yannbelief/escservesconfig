@@ -9,23 +9,9 @@ Escape provides a RESTful interface for both the setting and getting of environm
 
 == URL scheme ==
 
-This is most easily demonstrated by deconstruction of an example URL.
-
-{{{http://escape/environments/production/mywebapp/thiskey}}}
-
-Will return the value of "thiskey" for the "mywebapp" application in the "production" environment. 
-
-
-{{{http://escape/environments/production/mywebapp}}}
-
-Will return all keys and values for the "mywebapp" application in the "production" environment. 
-
-
-{{{http://escape/environments/production/}}}
-
-Will return a list of all the applications in the "production" environment.
-
-
-{{{http://escape/environments/}}}
-
-Will return a list of all the available environments
+This is most easily demonstrated by constructing an example URL.
+|| URL || Value returned ||
+|| {{{http://escape/environments/}}} || A list of all the available environments ||
+|| {{{http://escape/environments/production/mywebapp/thiskey}}} || The value of "thiskey" for the "mywebapp" application in the "production" environment. ||
+|| {{{http://escape/environments/production/mywebapp}}} || All keys and values for the "mywebapp" application in the "production" environment. ||
+|| {{{http://escape/environments/production/}}} || A list of all the applications in the "production" environment. ||
