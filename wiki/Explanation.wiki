@@ -1,19 +1,17 @@
-= Introduction =
+= ESCAPE =
 
 ESCAPE Serves Configuration Across Plentiful Environments
+
+* Define your environments;
+* Configure your software;
+* Own your configuration;
+* Encrypt your assets;
+* Streamline your build pipeline;
+* ESCAPE from configuration Samsara.
+
 
 = Details =
 
 This application exists to help in the development and running of custom applications. It is designed to serve environment-specific configuration to a variety of applications in a multitude of environments. 
 
 It is particularly useful if your SDLC uses a 'build pipeline' for the promotion of code into production, but this is not a prerequisite.
-
-<ul>
-<li><b>Define</b> your environments;</li>
-<li><b>Configure</b> your software;</li>
-<li><b>Own</b> your configuration;</li>
-<li><b>Encrypt</b> your assets;</li>
-<li><b>Streamline</b> your build pipeline;</li>
-<li><b>ESCAPE</b> from configuration Samsara.</li>
-</ul>
-</div>
