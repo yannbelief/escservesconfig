@@ -9,4 +9,20 @@ Escape provides a RESTful interface for both the setting and getting of environm
 
 == URL scheme ==
 
-This is most easily demonstrated by deconstruction a URL.
+The URL scheme is as follows:
+
+{{{http://*Escape server name*/environments/*Environment Name*/*Application name*/*Key name*}}}
+
+This is most easily demonstrated by deconstruction of an example URL.
+
+{{{http://escape/environments/production/mywebapp/thiskey}}}
+
+Will return the value of "thiskey" for the "mywebapp" application in the "production" environment. 
+
+
+{{{http://escape/environments/production/mywebapp}}}
+
+Will return all keys and values for the "mywebapp" application in the "production" environment. 
+
+
+{{{http://escape/environments/production/mywebapp}}}
