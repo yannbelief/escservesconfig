@@ -1,0 +1,12 @@
+#summary Documents the API for Escape.
+
+= Concept =
+
+Escape provides a RESTful interface for both the setting and getting of environment confguration. 
+
+
+{{{GET}}} requests will retrive configuration, whereas {{{PUT}}} requests will set it. 
+
+== URL scheme ==
+
+This is most easily demonstrated by deconstruction a URL.
