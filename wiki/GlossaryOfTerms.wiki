@@ -1,13 +1,13 @@
 #summary This page explains our terminology.
 
-= Introduction =
+= Glossary =
 
-Add your content here.
+== Application ==
 
+An application is a system that is under development. It can be of any architecture or language. 
 
-= Details =
+== Environment ==
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+An environment is a conceptual space where a single instance of an application runs. It is completely distinct from any other environment. 
+
+Environments could be as simple as a single desktop computer, or as complex as an entire production infrastructure that includes load-balancers, database servers, clusters of web servers _et al_. It is also possible for many environments to co-exist on a single piece of hardware.
