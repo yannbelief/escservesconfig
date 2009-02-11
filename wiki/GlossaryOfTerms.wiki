@@ -2,7 +2,7 @@
 
 = Glossary =
 
-== Application ==
+== Application (app)==
 
 An application is a system that is under development. It can be of any architecture or language. 
 
@@ -10,7 +10,7 @@ An application is a system that is under development. It can be of any architect
 
 A build pipeline is a series of automated, or semi-automated stages that code goes through between its creation and its deployment into production. A typical build pipeline is driven by a continuous integration server and involves a series of tests in a number of different environments. 
 
-== Environment ==
+== Environment (env)==
 
 An environment is a conceptual space where a single instance of an application runs. It is completely distinct from any other environment. 
 
