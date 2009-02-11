@@ -2,12 +2,12 @@
 
 ESCAPE Serves Configuration Across Plentiful Environments
 
-* Define your environments;
-* Configure your software;
-* Own your configuration;
-* Encrypt your assets;
-* Streamline your build pipeline;
-* ESCAPE from configuration Samsara.
+  * *Define* your environments;
+  * *Configure* your software;
+  * *Own* your configuration;
+  * *Encrypt* your assets;
+  * *Streamline* your build pipeline;
+  * *ESCAPE* from configuration Samsara.
 
 
 = Details =
