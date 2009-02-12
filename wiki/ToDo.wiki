@@ -16,9 +16,9 @@ We are painfully aware that there is no security in Escape at v0.1. Our plans fo
 
 We're using Sequel in the backend. We use SQLite3 for development, but we're planning to do some basic testing with the following databases:
 
-  * PostgresQL
-  * MySQL
-  * Oracle
+  * PostgresQL - tested - works
+  * MySQL - tested - works
+  * Oracle - tested - need to work with Sequel to support auto incrementing primary keys to get it to work
 
 
 == Client libraries ==
