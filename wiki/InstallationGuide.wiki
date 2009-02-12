@@ -2,9 +2,9 @@ First off - this a Ruby app. Dev and tested with Ruby 1.8 on OSX.
 
 Required ruby gems:
 
-  * ramaze
+  * ramaze (>= 2009.01)
   * rack
-  * sequel
+  * sequel (>= 2.10.0)
   * sqlite
   * json
 
