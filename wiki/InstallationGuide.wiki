@@ -17,3 +17,14 @@ In addition to Ruby 1.8, Escape also requires the following gems:
 The best way to get Escape is to [http://code.google.com/p/escservesconfig/downloads/list download] the zip file. Just unpack it where you want to keep it and go. If you have _rackup_ in your path, you can start the server with _./start.ru_. If not, _ruby start.rb_ should work.
 
 Once the server is up, connect on port 7000 with your favourite browser.
+
+== Alternate Databases ==
+
+Escape is primarily developed and tested using SQLite3 as the database. We've also tested it (to a lesser extent) with the following:
+
+  * [http://www.mysql.com/ MySQL]
+  * [http://www.postgresql.org/ PostgreSQL]
+
+To use one of these database, please edit the file _model/init.rb_ and follow the comments.
+
+There is currently a bug in Sequel which prevents Oracle from working. We're hoping to get that fixed real soon...
