@@ -2,7 +2,7 @@
 
 = Credits =
 
-== Commiters ==
+== Committers ==
 
 These people wrote Escape.
 
