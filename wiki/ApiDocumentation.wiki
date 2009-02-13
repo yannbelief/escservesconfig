@@ -1,4 +1,5 @@
 #summary Documents the API for Escape.
+#labels Featured
 
 = Concept =
 
