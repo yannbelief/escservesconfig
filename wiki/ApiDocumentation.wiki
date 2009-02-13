@@ -2,17 +2,17 @@
 
 = Concept =
 
-Escape provides a RESTful interface for both the setting and getting of environment confguration. 
+Escape provides a RESTful interface for both the setting and getting of environment configuration. 
 
 
-{{{GET}}} requests will retrive configuration, whereas {{{PUT}}} requests will set it. 
+{{{GET}}} requests will retrieve configuration, whereas {{{PUT}}} requests will set it. 
 
 = URL scheme =
 
 This is most easily demonstrated by constructing an example URL.
 || *URL* || *Value returned* ||
 || {{{http://escape/}}}|| User interface. No API available here. ||
-|| {{{http://escape/environments/}}} || A list of all the available environments ||
+|| {{{http://escape/environments/}}} || A list of all the available environments. ||
 || {{{http://escape/environments/production/}}} || A list of all the applications in the "production" environment. ||
 || {{{http://escape/environments/production/mywebapp}}} || All keys and values for the "mywebapp" application in the "production" environment. ||
 || {{{http://escape/environments/production/mywebapp/thiskey}}} || The value of "thiskey" for the "mywebapp" application in the "production" environment. ||
