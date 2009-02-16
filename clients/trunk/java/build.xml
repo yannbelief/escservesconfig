@@ -1,0 +1,54 @@
+<project name="esc-client-java" default="build">
+
+    <property name="target.dir" value="${basedir}/target"/>
+    <property name="main.classes.dir" value="${target.dir}/classes"/>
+    <property name="test.classes.dir" value="${target.dir}/test-classes"/>
+    <property name="lib.dir" value="${basedir}/lib"/>
+    <property name="src.dir" value="${basedir}/src/main/java"/>
+    <property name="test.dir" value="${basedir}/src/test/java"/>
+    <property name="reports.dir" value="${target.dir}/reports"/>
+    <property name="dist.dir" value="${target.dir}/dist"/>
+
+    <path id="test.class.path">
+        <pathelement location="${main.classes.dir}"/>
+        <fileset dir="${lib.dir}/test" includes="*.jar"/>
+    </path>
+
+    <target name="clean">
+        <delete dir="${target.dir}"/>
+    </target>
+
+    <target name="compile">
+        <mkdir dir="${main.classes.dir}"/>
+        <mkdir dir="${test.classes.dir}"/>
+        <javac source="1.5" target="1.5" srcdir="${src.dir}" destdir="${main.classes.dir}"/>
+        <javac source="1.5" target="1.5" classpathref="test.class.path" srcdir="${test.dir}" destdir="${test.classes.dir}"/>
+    </target>
+
+    <target name="test">
+        <mkdir dir="${reports.dir}"/>
+        <junit printsummary="true" tempdir="${reports.dir}" fork="false"
+        haltonerror="false" haltonfailure="false" timeout="60000">
+            <classpath>
+                <path refid="test.class.path"/>
+                <pathelement location="${test.classes.dir}"/>
+            </classpath>
+            <formatter type="xml"/>
+            <batchtest todir="${reports.dir}" failureproperty="unit.test.failed">
+                <fileset dir="${test.dir}">
+                    <include name="**/*Test.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+
+        <fail if="unit.test.failed" message="Unit tests failed"/>
+    </target>
+
+    <target name="package">
+        <mkdir dir="${dist.dir}"/>
+
+        <jar destfile="${dist.dir}/${ant.project.name}.jar" compress="true" basedir="${main.classes.dir}"/>
+    </target>
+
+    <target name="build" description="Build and test our package" depends="clean, compile, test, package"/>
+</project>
