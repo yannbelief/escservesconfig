@@ -12,6 +12,7 @@ In addition to Ruby 1.8, Escape also requires the following gems:
   * sequel (>= 2.10.0)
   * sqlite
   * json
+  * mongrel
 
 == Getting Escape ==
 
