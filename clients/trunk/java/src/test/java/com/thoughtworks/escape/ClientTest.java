@@ -88,7 +88,7 @@ public class ClientTest {
     }
 
     @Test
-    public void testMalformedURLExceptionIsThrownOnBadURL() throws IOException {
+    public void testThatMalformedURLExceptionIsThrownOnBadURL() throws IOException {
         Boolean exception = false;
         try {
             Client.getProperties("sheep://cheese", ENV, APP);
@@ -100,7 +100,7 @@ public class ClientTest {
     }
 
     @Test
-    public void testBadAppOrEnvThrowsFileNotFoundException() throws IOException {
+    public void testThatBadEnvThrowsFileNotFoundException() throws IOException {
         Boolean exception = false;
         try {
             Client.getProperties(HOST, "non-existing-env", APP);
@@ -109,8 +109,11 @@ public class ClientTest {
         }
         
         assertTrue(exception);
+    }
 
-        exception = false;
+    @Test
+    public void testThatBadAppThrowsFileNotFoundException() throws IOException {
+        Boolean exception = false;
         try {
             Client.getProperties(HOST, ENV, "non-existing-app");
         } catch (FileNotFoundException e) {
