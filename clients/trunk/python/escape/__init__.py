@@ -6,7 +6,7 @@ Only really used as:
 
 import escape
 
-cfg = escape.Client(...)
+cfg = escape.Config().getConfig(...)
 
 """
 
