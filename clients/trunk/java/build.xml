@@ -1,4 +1,4 @@
-<project name="esc-client-java" default="build">
+<project name="escape-client-java" default="build">
 
     <property name="target.dir" value="${basedir}/target"/>
     <property name="main.classes.dir" value="${target.dir}/classes"/>
