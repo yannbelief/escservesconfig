@@ -53,14 +53,14 @@ public class ClientTest {
         code = client.executeMethod(method);
         assertThat(code, either(is(200)).or(is(201)));
 
-        PostMethod post = new PostMethod(getUrl() + "/key1");
-        post.setRequestBody("value1");
-        code = client.executeMethod(post);
+        PutMethod put = new PutMethod(getUrl() + "/key1");
+        put.setRequestBody("value1");
+        code = client.executeMethod(put);
         assertThat(code, either(is(200)).or(is(201)));
 
-        post = new PostMethod(getUrl() + "/key2");
-        post.setRequestBody("value2");
-        code = client.executeMethod(post);
+        put = new PutMethod(getUrl() + "/key2");
+        put.setRequestBody("value2");
+        code = client.executeMethod(put);
         assertThat(code, either(is(200)).or(is(201)));
     }
 
