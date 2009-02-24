@@ -14,6 +14,21 @@
         <fileset dir="${lib.dir}/test" includes="*.jar"/>
     </path>
 
+    <path id="svn.class.path">
+        <fileset dir="${lib.dir}/build">
+            <include name="svnant.jar"/>
+            <include name="svnClientAdapter.jar"/>
+        </fileset>
+    </path>
+
+    <typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpathref="svn.class.path"/>
+
+    <target name="get.svn.info" unless="svn.revision">
+        <svn javahl="false">
+            <status path="${basedir}" revisionProperty="svn.revision" urlProperty="svn.url"/>
+        </svn>
+    </target>
+
     <target name="clean">
         <delete dir="${target.dir}"/>
     </target>
@@ -25,7 +40,7 @@
         <javac source="1.5" target="1.5" classpathref="test.class.path" srcdir="${test.dir}" destdir="${test.classes.dir}"/>
     </target>
 
-    <target name="test">
+    <target name="test" depends="compile">
         <mkdir dir="${reports.dir}"/>
         <junit printsummary="true" tempdir="${reports.dir}" fork="false"
         haltonerror="false" haltonfailure="false" timeout="60000">
@@ -44,10 +59,15 @@
         <fail if="unit.test.failed" message="Unit tests failed"/>
     </target>
 
-    <target name="package">
+    <target name="package" depends="compile, get.svn.info">
         <mkdir dir="${dist.dir}"/>
 
-        <jar destfile="${dist.dir}/${ant.project.name}.jar" compress="true" basedir="${main.classes.dir}"/>
+        <jar destfile="${dist.dir}/${ant.project.name}.jar" compress="true" basedir="${main.classes.dir}">
+            <manifest>
+                <attribute name="Svn-Revision" value="${svn.revision}"/>
+                <attribute name="Svn-Url" value="${svn.url}"/>
+            </manifest>
+        </jar>
     </target>
 
     <target name="build" description="Build and test our package" depends="clean, compile, test, package"/>
