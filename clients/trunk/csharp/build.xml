@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="Client" default="build" xmlns="http://nant.sf.net/schemas/nant.xsd" basedir=".">
+    <property name="nant.settings.currentframework" value="net-2.0" />    
+    <property name="msbuild.exe" value="C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727\msbuild.exe" />
+    <property name="solution.dir" value="src"/>
+    <property name="solution.file" value="${solution.dir}\Client.sln"/>
+    <property name="project.config" value="Release" />
+    <property name="tools.dir" value="tools" />
+    <property name="results.dir" value="results" />
+    <property name="build.dir" value="build" />
+    <property name="company.name" value="Thoughtworks" />
+    <property name="dist.dir" value="dist" />
+    <property name="latest.dir" value="${dist.dir}\latest" />
+   
+    <property name="version" value="0.0.0.0"/> 
+    
+    <target name="build" depends="clean,set-version,compile,test,dist"/>
+    
+    <target name="ccnet" depends="build"/>
+        
+    
+          
+
+    <target name="set-version" description="sets the version number to use the CCNetLabel if available">
+          <property name="version" value="${CCNetLabel}" if="${property::exists('CCNetLabel')}"/>
+    </target>
+
+    <target name="clean" description="Delete all previously compiled binaries.">
+            <delete>
+                <fileset basedir="${solution.dir}">
+                    <include name="**/bin/**" />
+                    <include name="**/obj/**" />
+                </fileset>
+            </delete>
+            <delete dir="${build.dir}" />
+            <delete dir="${results.dir}" />
+            <delete dir="${dist.dir}"/>
+    </target>
+
+
+
+    <target name="compile" depends=" -commonassemblyinfo">
+            <delete dir="${build.dir}"  />
+            <mkdir dir="${build.dir}" />
+            <property name="full.build.path" value="${path::get-full-path(build.dir)}" />
+            
+            <exec workingdir="." program="${msbuild.exe}">
+                <arg value="/nologo" />
+                <arg value="/verbosity:quiet" />
+                <arg value="${solution.file}" />
+                <arg value="/t:Rebuild" />
+                <arg value="/p:Configuration=${project.config}" />
+                <arg value="/p:OutDir=${full.build.path}\" />
+            </exec>
+    </target>
+
+
+    <target name="test"  description="runs all the tests">
+            <nunit2 failonerror="true" verbose="true">
+                    <formatter type="Xml" outputdir="${results.dir}" usefile="true" extension=".xml"/>
+                    <formatter type="Plain" />
+                    <test assemblyname="${build.dir}\Thoughtworks.Escape.Tests.dll">
+                            <categories>
+                                <exclude name="FunctionalTests" />
+                            </categories>
+                    </test>
+            </nunit2>
+    </target>
+
+
+
+    <target name="dist" depends="-set-artifact-name">
+         <call target="-latest-artifact"/>
+    </target>   
+
+  
+    
+     
+     
+     <!-- **** target that should not be called directly **** -->
+
+      
+
+     <target name="-latest-artifact">
+         <delete dir="${dist.dir}" />
+      
+         <copy todir="${latest.dir}">
+             <fileset basedir="${build.dir}">
+                    <include name="**" />
+                    <exclude name="Thoughtworks.Escape.Tests.*" />
+                    <exclude name="nunit.framework.*" />
+             </fileset>           
+         </copy>
+        
+         
+         <zip zipfile="${dist.dir}\${artifact}" includeemptydirs="true">
+              <fileset basedir="${latest.dir}">
+                 <include name="**" />
+             </fileset>
+         </zip>
+
+
+     </target>
+
+    
+
+     <target name="-set-artifact-name">
+         <property name="artifact.name" value="${project::get-name()}.${version}" /> 
+         <property name="artifact" value="${artifact.name}.zip" />
+    </target>
+
+
+     
+      
+     <target name="-commonassemblyinfo" description="creates a AssemblyInfo file to be used for a consistent versioning">
+             <echo message="MARKING THIS BUILD AS VERSION ${version}" />
+             <delete file="${solution.dir}/CommonAssemblyInfo.cs" failonerror="false"/>
+             <asminfo output="${solution.dir}/CommonAssemblyInfo.cs" language="CSharp">
+                 <imports>
+                     <import namespace="System" />
+                     <import namespace="System.Reflection" />
+                     <import namespace="System.Runtime.InteropServices" />
+                 </imports>
+                 <attributes>
+                     <attribute type="ComVisibleAttribute" value="false" />
+                     <attribute type="AssemblyVersionAttribute" value="${version}" />
+                     <attribute type="AssemblyFileVersionAttribute" value="${version}" />
+                     <attribute type="AssemblyCopyrightAttribute" value="Copyright (c) ${company.name} 2008-${datetime::get-year(datetime::now())}" />
+                     <attribute type="AssemblyProductAttribute" value="${project::get-name()}" />
+                     <attribute type="AssemblyCompanyAttribute" value="${company.name}" />
+                     <attribute type="AssemblyConfigurationAttribute" value="${project.config}" />
+                     <attribute type="AssemblyInformationalVersionAttribute" value="${version}" />
+                 </attributes>
+                 <references>
+                     <include name="System.dll" />
+                 </references>
+             </asminfo>
+     </target>
+
+
+
+    
+   
+</project>
