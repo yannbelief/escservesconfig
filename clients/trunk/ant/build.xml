@@ -1,0 +1,18 @@
+<project name="escape-ant-example" default="show.properties">
+    <target name="set.properties">
+        <exec executable="curl">
+            <arg line="-X PUT http://localhost:7000/environments/clients"/>
+        </exec>
+        <exec executable="curl">
+            <arg line="-X PUT http://localhost:7000/environments/clients/ant"/>
+        </exec>
+        <exec executable="curl">
+            <arg line="-X PUT -d '${ant.version}' http://localhost:7000/environments/clients/ant/ant.version"/>
+        </exec>
+    </target>
+
+    <target name="show.properties" depends="set.properties">
+        <property prefix="esc" url="http://localhost:7000/environments/clients/ant"/>
+        <echo message="esc.ant.version = ${esc.ant.version}"/>
+    </target>
+</project>
