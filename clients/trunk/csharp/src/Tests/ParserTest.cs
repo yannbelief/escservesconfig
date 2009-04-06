@@ -16,13 +16,9 @@ namespace Thoughtworks.Escape.Tests
         }
 
         [Test]
-        public void ShouldParseStringToNameValuePares()
+        public void ShouldParseStringToNameValuePares_ByCarriageReturnAndNewLine()
         {
-            string input = @"setting1=value 1
-setting2= value 2
-
-setting3=value = 3
-setting4=";
+            string input = "setting1=value 1\r\nsetting2= value 2\r\n\r\nsetting3=value = 3\r\nsetting4=";
             Hashtable output = Parser.Parse(input);
             Assert.AreEqual(4, output.Count);
             Assert.AreEqual("value 1", output["setting1"]);
@@ -30,5 +26,19 @@ setting4=";
             Assert.AreEqual("value = 3", output["setting3"]);
             Assert.AreEqual(string.Empty, output["setting4"]);
         }
+
+        [Test]
+        public void ShouldParseStringToNameValuePares_ByNewLineOnly()
+        {
+            string input = "setting1=value 1\nsetting2= value 2\n\nsetting3=value = 3\nsetting4=";
+            Hashtable output = Parser.Parse(input);
+            Assert.AreEqual(4, output.Count);
+            Assert.AreEqual("value 1", output["setting1"]);
+            Assert.AreEqual(" value 2", output["setting2"]);
+            Assert.AreEqual("value = 3", output["setting3"]);
+            Assert.AreEqual(string.Empty, output["setting4"]);
+        }
+
+
     }
 }

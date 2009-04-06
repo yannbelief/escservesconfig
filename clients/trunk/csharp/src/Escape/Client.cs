@@ -24,7 +24,9 @@ namespace Thoughtworks.Escape
                 byte[] buffer = ReadFully(stream);
                 UTF8Encoding encoding = new UTF8Encoding();
                 if (buffer.Length > 0) input = encoding.GetString(buffer);
+                stream.Close();
             }
+            response.Close();
             return Parser.Parse(input);
         }
 

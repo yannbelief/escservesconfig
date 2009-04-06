@@ -8,7 +8,8 @@ namespace Thoughtworks.Escape
         public static Hashtable Parse(string input)
         {
             string[] seperates = new string[1];
-            seperates[0] = "\r\n";
+            input = input.Replace("\r", "");
+            seperates[0] = "\n";
             string[] settings = input.Split(seperates, StringSplitOptions.RemoveEmptyEntries);
             Hashtable output = new Hashtable();
             foreach (string setting in settings)
