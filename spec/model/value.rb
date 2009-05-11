@@ -12,18 +12,20 @@ describe Value do
   
   it "should return true if default" do
     myApp = App.create(:name => 'testapp')
-    Environment.default.add_app(myApp)
-    aKey = Key.create(:name => 'key', :app_id => myApp[:id])
-    value = Value.create(:key_id => aKey[:id], :environment_id => Environment.default[:id], :value => value, :is_encrypted => false)
+    myAppVersion = Appversion.create(:name => '1.0', :app_id => myApp[:id])
+    Environment.default.add_appversion(myAppVersion)
+    aKey = Key.create(:name => 'key', :appversion_id => myAppVersion[:id])
+    value = Value.create(:key_id => aKey[:id], :appversion_id=>myAppVersion[:id], :environment_id => Environment.default[:id], :value => value, :is_encrypted => false)
     value.default?.should == true 
   end
   
   it "should return false if not default" do
     anEnv = Environment.create(:name => 'test')
     myApp = App.create(:name => 'testapp')
-    anEnv.add_app(myApp)
-    aKey = Key.create(:name => 'key', :app_id => myApp[:id])
-    value = Value.create(:key_id => aKey[:id], :environment_id => anEnv[:id], :value => value, :is_encrypted => false)
+    myAppVersion = Appversion.create(:name => '1.0', :app_id => myApp[:id])
+    anEnv.add_appversion(myAppVersion)
+    aKey = Key.create(:name => 'key', :appversion_id => myAppVersion[:id])
+    value = Value.create(:key_id => aKey[:id], :appversion_id=>myAppVersion[:id], :environment_id => anEnv[:id], :value => value, :is_encrypted => false)
     value.default?.should == false 
   end
   

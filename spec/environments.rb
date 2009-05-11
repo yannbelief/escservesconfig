@@ -19,6 +19,12 @@ describe EnvironmentsController, 'Environment bits' do
     end
 
     # Environment tests
+    
+    it 'should allow versions in appname' do
+        'foo'.match(/\A[.a-zA-Z0-9_-]+(#[0-9]+[.]{1}[0-9]+){0,1}\Z/).nil?.should == false
+        'foo#1.0'.match(/\A[.a-zA-Z0-9_-]+(#[0-9]+[.]{1}[0-9]+){0,1}\Z/).nil?.should == false
+    end
+    
     it 'should not accept put on /environments' do
         got = put('/environments/')
         got.status.should == 400

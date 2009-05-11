@@ -17,6 +17,7 @@ class Value < Sequel::Model(:values)
 
     many_to_one :key, :class => :Key
     many_to_one :environment, :class => :Environment
+    many_to_one :appversion, :class => :Appversion
 
     set_schema do
         primary_key :id, :null => false
@@ -25,6 +26,7 @@ class Value < Sequel::Model(:values)
         
         foreign_key :key_id, :table => :keys, :type => Integer
         foreign_key :environment_id, :table => :environments, :type => Integer
+        foreign_key :appversion_id, :table => :appversions, :type => Integer
     end
     
     def default?

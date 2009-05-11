@@ -8,11 +8,12 @@ require __DIR__('../../start')
 module DBHelper
     def reset_db
         App.create_table!
+        Appversion.create_table!
         Environment.create_table!
         Owner.create_table!
         Key.create_table!
         Value.create_table!
-        AppsEnvironments.create_table!
+        AppversionsEnvironments.create_table!
 
         if Environment[:name => 'default'].nil?
             Environment.create(:name => 'default')

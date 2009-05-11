@@ -15,14 +15,18 @@
 class Key < Sequel::Model(:keys)
     plugin :schema
 
-    many_to_one :app, :class => :App
+    many_to_one :appversion, :class => :Appversion
     one_to_many :values, :class => :Value
 
     set_schema do
         primary_key :id, :null => false
         String :name
 
-        foreign_key :app_id, :table => :apps, :type => Integer
+        foreign_key :appversion_id, :table => :appversions, :type => Integer
+    end
+    
+    def sameAs(otherKey)
+      otherKey[:name] == self[:name]
     end
 end
 

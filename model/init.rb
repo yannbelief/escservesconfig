@@ -36,6 +36,7 @@ end
 # require 'model/user'
 
 require 'model/app'
+require 'model/appversion'
 require 'model/owner'
 require 'model/environment'
 require 'model/key'
