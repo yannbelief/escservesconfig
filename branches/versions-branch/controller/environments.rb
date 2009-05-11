@@ -24,28 +24,35 @@ class EnvironmentsController < EscController
             respond("Invalid environment name. Valid characters are ., a-z, A-Z, 0-9, _ and -", 403)
         end
 
-        if app && (not app =~ /\A[.a-zA-Z0-9_-]+\Z/)
+        if app && (not app =~ /\A[.a-zA-Z0-9_-]+(#[0-9]+[.]{1}[0-9]+){0,1}\Z/)
             respond("Invalid application name. Valid characters are ., a-z, A-Z, 0-9, _ and -", 403)
         end
-
+        
         if key && (not key =~ /\A[.a-zA-Z0-9_-]+\Z/)
             respond("Invalid key name. Valid characters are ., a-z, A-Z, 0-9, _ and -", 403)
         end
 
         @env = env
-        @app = app
+        @app = getAppName(app) unless app.nil?
+        @version = getVersionName(app) unless app.nil?
+        @version = 'default' if @version.nil?
         @key = key
-
+        
+        Ramaze::Log.info "Controller ...Env:#{@env} App:#{@app} Version:#{@version} Key:#{@key}"
+        
         # Getting...
         if request.get?
             # List all environments
-            if env.nil?
+            if @env.nil?
                 listEnvs
             # List all apps in specified environment
-            elsif app.nil?
+            elsif @app.nil?
                 listApps
-            # List keys and values for app in environment
-            elsif key.nil?
+            # List all versions for in specified environment - currently will not be invoked -not possible to distinguish from listKeys
+            elsif @version.nil?
+                listAppVersions
+            # List keys and values for app version in environment
+            elsif @key.nil?
                 listKeys
             # We're getting value for specific key
             else 
@@ -55,10 +62,10 @@ class EnvironmentsController < EscController
         # Copying...
         elsif request.post?
             # Undefined
-            if env.nil?
+            if @env.nil?
                 respond("Undefined", 400)
             # You're copying an env
-            elsif app.nil?
+            elsif @app.nil?
                 # env is the target, Location Header has the source
                 copyEnv
             end
@@ -66,14 +73,17 @@ class EnvironmentsController < EscController
         # Creating...
         elsif request.put?
             # Undefined
-            if env.nil?
+            if @env.nil?
                 response.status = 400
             # You're creating a new env
-            elsif app.nil?
+            elsif @app.nil?
                 createEnv
-            # You're creating a new app
-            elsif key.nil?
-                createApp
+            # You're creating a new app with default version
+            elsif @version.nil?
+                createAppVersion
+            # You're creating a new app with given version
+            elsif @key.nil?
+                createAppVersion
             # Key stuff
             else
                 setValue
@@ -82,14 +92,17 @@ class EnvironmentsController < EscController
         # Deleting...
         elsif request.delete?
             # Undefined
-            if env.nil?
+            if @env.nil?
                 response.status = 400
             # You're deleting an env
-            elsif app.nil?
+            elsif @app.nil?
                 deleteEnv
-            # You're deleting an app
-            elsif key.nil?
-                deleteApp
+            # You're deleting default version of app
+            elsif @version.nil?
+                deleteAppVersion
+            # You're deleting an app version
+            elsif @key.nil?
+                deleteAppVersion
             # You're deleting a key
             else             
                 deleteKey
@@ -99,6 +112,15 @@ class EnvironmentsController < EscController
 
     private
 
+    def getAppName(name)
+        return name.slice(0, name.index('#')) if name.index('#')
+        return name
+    end
+    
+    def getVersionName(name)
+        name.slice(name.index('#')+1, name.length) unless name.index('#').nil?
+    end
+    
     def getEnv(failOnError = true)
         @myEnv = Environment[:name => @env]
         respond("Environment '#{@env}' does not exist.", 404) if @myEnv.nil? and failOnError
@@ -112,9 +134,15 @@ class EnvironmentsController < EscController
         @appId = @myApp[:id] unless @myApp.nil?
     end
 
+    def getAppversion(failOnError = true)
+          @myAppversion = Appversion[:name => @version, :app_id =>  @appId]
+          respond("Application version'#{@version}' does not exist.", 404) if @myAppversion.nil? and failOnError
+          @appVersionId = @myAppversion[:id] unless @myAppversion.nil?
+    end
+
     def getKey(failOnError = true)
-        @myKey = Key[:name => @key, :app_id => @appId]
-        respond("There is no key '#{@key}' for Application '#{@app}' in Environment '#{@env}'.", 404) if @myKey.nil? and failOnError
+        @myKey = @myAppversion.find_key(@key) unless @myAppversion.nil?
+        respond("There is no key '#{@key}' for Application version'#{@app}-#{@version}' in Environment '#{@env}'.", 404) if @myKey.nil? and failOnError
         @keyId = @myKey[:id] unless @myKey.nil?
     end
 
@@ -130,50 +158,45 @@ class EnvironmentsController < EscController
         respond("Environment '#{@env}' deleted.", 200)
     end
 
-    def deleteApp
+    def deleteAppVersion
+        getEnv
         getApp
-
-        if @env == "default"
-            # TODO: What if this app has values in other environments???
-            @myApp.delete
-            respond("Applicaton '#{@app}' deleted.", 200)
-        else         
-            getEnv
+        getAppversion
+        
+        if @myEnv.default?
+            if @myAppversion.delete_from_environment(@myEnv)
+              respond("Applicaton version '#{@app}-#{@version}' deleted.", 200)
+            else
+              respond("Applicaton version '#{@app}-#{@version}' could not be deleted. It exists in non-default environments or has child versions.", 403)
+            end
+        else
             check_auth(@myEnv.owner.name, "Environment #{@env}")
-            @myApp.remove_environment(@myEnv)
-            respond("Application '#{@app}' deleted from the '#{@env}' environment.", 200)
+            if @myAppversion.delete_from_environment(@myEnv)
+              respond("Application version'#{@app}-#{@version}' deleted from the '#{@env}' environment.", 200)
+            else
+              respond("Application version'#{@app}-#{@version}' could not be deleted from the '#{@env}' environment. It has child versions.", 403)
+            end
         end
     end
 
     def deleteKey
         getEnv
         getApp
+        getAppversion
         getKey
 
-        if @env == "default"
-            # Don't delete default if we have a value set in a non-default env
-            set = false
-            @myKey.app.environments.each do |appenv|
-                if (not Value[:key_id => @keyId, :environment_id => appenv[:id]].nil?) and (appenv.name != "default")
-                    set = true
-                    break
-                end
-            end
-            
-            if not set
-                @myKey.delete
+        if @myEnv.default?
+            if @myAppversion.delete_key_value(@myKey, @myEnv)
                 respond("Key '#{@key}' deleted from application '#{@app}'.", 200)
             else
                 respond("Key #{@key} can't be deleted. It has non default values set.", 403)
             end
         else         
             check_auth(@myEnv.owner.name, "Environment #{@env}")
-            myValue = Value[:key_id => @keyId, :environment_id => @envId]
-            if myValue.nil?
-                respond("Key '#{@key}' has no value in the '#{@env}' environment.", 404)
-            else
-                myValue.delete
+            if @myAppversion.delete_key_value(@myKey, @myEnv)
                 respond("Key '#{@key}' deleted from the '#{@env}' environment.", 200)
+            else
+                respond("Key '#{@key}' has no value in the '#{@env}' environment.", 404)
             end
         end
         
@@ -205,28 +228,37 @@ class EnvironmentsController < EscController
         return apps.sort.to_json
     end
     
-    def listKeys
-        # List keys and values for app in environment
+    def listAppVersions
+        # List all app versions in specified app and environment
         getEnv
         getApp
+        
+        appVersions = Array.new
+        @myEnv.appversions.each do |appversion|
+            appVersions.push(appversion[:name])
+        end
 
-        if @myEnv.apps.include? @myApp
+        response.headers["Content-Type"] = "application/json"
+        return appVersions.sort.to_json
+    end
+    
+    def listKeys
+        # List keys and values for app version in environment
+        getEnv
+        getApp
+        getAppversion
+ 
+        if @myEnv.has_version(@myAppversion)
             pairs = Array.new
             defaults = Array.new
             overrides = Array.new
             encrypted = Array.new
-            @myApp.keys.each do |key|
-                value = Value[:key_id => key[:id], :environment_id => @envId]
-
-                if value.nil? # Got no value in specified env, what's in default and do we want defaults?
-                    value = Value[:key_id => key[:id], :environment_id => @defaultId]
-                    defaults.push(key[:name])
-                else
-                    overrides.push(key[:name])
-                end
-                
-                encrypted.push(key[:name]) if value[:is_encrypted]
-                pairs.push("#{key[:name]}=#{value[:value].gsub("\n", "")}\n")
+            keyValues = @myApp.all_key_values(@myAppversion, @myEnv)
+            keyValues.each do |keyValue|
+                defaults.push(keyValue.key) if keyValue.default?
+                overrides.push(keyValue.key) if keyValue.overridden?
+                encrypted.push(keyValue.key) if keyValue.encrypted?
+                pairs.push("#{keyValue.key}=#{keyValue.value.gsub("\n", "")}\n")
             end
 
             response.headers["Content-Type"] = "text/plain"
@@ -235,40 +267,39 @@ class EnvironmentsController < EscController
             response.headers["X-Encrypted"] = encrypted.sort.to_json
             return pairs.sort
         else
-            respond("Application '#{@app}' is not included in Environment '#{@env}'.", 404)
+            respond("Application '#{@app}' (version '#{@myAppversion[:name]}') is not included in Environment '#{@env}'.", 404)
         end
     end
 
 
     def getValue
+        Ramaze::Log.info "getValue:"
         getEnv
         getApp
-
-        if not @myEnv.apps.include? @myApp
-            respond("Application '#{@app}' is not included in Environment '#{@env}'.", 404)
+        getAppversion
+        
+        if !@myEnv.has_version(@myAppversion)
+            respond("Application version'#{@app}-#{@version}' is not included in Environment '#{@env}'.", 404)
         end
 
         getKey(false)
 
-        value = @myApp.get_key_value(@myKey, @myEnv)
+        value = @myApp.get_key_value(@myKey, @myAppversion, @myEnv)
         if value.nil?
             respond("No default value", 404)
         else
-            if value.default?
-                response.headers["X-Value-Type"] = "default"
-            else
-                response.headers["X-Value-Type"] = "override"
-            end
+            response.headers["X-Value-Type"] = "default" if value.default?
+            response.headers["X-Value-Type"] = "override" if value.overridden?
         end
 
-        if value[:is_encrypted]
+        if value.encrypted?
             response.headers["Content-Type"] = "application/octet-stream"
             response.headers["Content-Transfer-Encoding"] = "base64"
         else
             response.headers["Content-Type"] = "text/plain"
         end
 
-        return value[:value]
+        return value.value
     end
 
     #
@@ -283,25 +314,30 @@ class EnvironmentsController < EscController
         respond("Environment created.", 201)
     end
 
-    def createApp
+    def createAppVersion
         getEnv
         check_auth(@myEnv.owner.name, "Environment #{@env}")
         getApp(false)
-        respond("Application '#{@app}' already exists in environment '#{@env}'.", 200) if @myApp and @myApp.environments.include? @myEnv
-
-        if @myApp.nil?
-            @myApp = App.create(:name => @app)
-        end
-        @myEnv.add_app(@myApp) unless @myEnv.apps.include? @myApp
-
-        respond("Application '#{@app}' created in environment '#{@env}'.", 201)
+        getAppversion(false)
+        parentVersionName = request.body.read
+        parentVersionName = 'default' if parentVersionName.empty?
+        parentVersion = @myApp.version_by_name(parentVersionName) unless @myApp.nil?
+         
+        respond("Invalid parent version '#{parentVersionName}'", 200) if parentVersionName != 'default' and parentVersion.nil?
+        respond("Application version '#{@version}' already exists in #{@app} in environment '#{@env}'.", 200) if @myAppversion and @myEnv.has_version(@myEnv)
+        
+        @myAppversion = App.create_version(@app, @version, parentVersion, @myEnv)
+        
+        respond("Application '#{@app}' with version '#{@version}' with parent '#{parentVersionName}' created in environment '#{@env}'.", 201)
     end
 
     def setValue
+        Ramaze::Log.info "SetValue:"
         getEnv
         check_auth(@myEnv.owner.name, "Environment #{@env}")
         getApp
-
+        getAppversion
+        
         value = request.body.read
         if request.env['QUERY_STRING'] =~ /encrypt/
             encrypted = true
@@ -312,8 +348,8 @@ class EnvironmentsController < EscController
         else
             encrypted = false
         end
-
-        if @myApp.set_key_value(@key, @myEnv, value, encrypted)
+        
+        if @myApp.set_key_value(@key, @myAppversion, @myEnv, value, encrypted)
           respond("Created key '#{@key}", 201)
         else
           respond("Updated key '#{@key}", 200)

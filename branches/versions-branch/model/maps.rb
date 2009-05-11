@@ -12,14 +12,14 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-class AppsEnvironments < Sequel::Model
+class AppversionsEnvironments < Sequel::Model
     plugin :schema
 
     set_schema do
-        Integer :app_id
+        Integer :appversion_id
         Integer :environment_id
     end
 end
 
-EscData.init_model(AppsEnvironments)
+EscData.init_model(AppversionsEnvironments)
 

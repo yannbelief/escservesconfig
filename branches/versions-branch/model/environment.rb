@@ -17,7 +17,7 @@ class Environment < Sequel::Model(:environments)
     plugin :schema
     plugin :hook_class_methods
 
-    many_to_many :apps, :class => :App
+    many_to_many :appversions, :class => :Appversion
     many_to_one :owner, :class => :Owner
     one_to_many :values, :class => :Value
 
@@ -37,7 +37,23 @@ class Environment < Sequel::Model(:environments)
     end
     
     def self.default
-      Environment[:name => "default"]
+        Environment[:name => "default"]
+    end
+    
+    def has_version(version)
+      self.appversions.find { |v| v[:id] == version[:id]}
+    end
+    
+    def default?
+      self[:id] == Environment.default[:id]
+    end
+    
+    def apps
+        apps = Array.new
+        self.appversions.each do |appversion|
+            apps.push(appversion.app) unless apps.include? appversion.app
+        end
+        apps
     end
 end
 
