@@ -1,0 +1,160 @@
+body {
+   font-family: Helvetica, Arial, sans-serif;
+   font-size: small;
+   font-color: #000;
+   background:lightgrey;
+   overflow-y: scroll;
+}
+a:link, a:active, a:visited {
+   color: white;
+}
+p { 
+background:white
+   	width:90%;
+}
+li {
+	list-style:none;
+	vertical-align:middle;
+}
+li.environment {
+	background:white;
+}
+li.application {
+	background:white;
+}
+li.newitem {
+	background:white;
+}
+input#new_app_name{
+	width:80%;
+	margin-bottom:2px;
+}
+input#copy_env_name{
+	width:80%;
+	margin-bottom:2px;
+}
+input{
+	background: white;
+	border: 1px solid lightgrey;
+	overflow:hidden;
+}
+img
+{  border-style: none;
+}
+img#logo
+{  border-style: none;
+}
+img.appedit{
+	margin-right:2px;
+	margin-left:2px;
+}
+img.envdelete{
+	margin-right:2px;
+}
+img.envedit{
+	margin-right:2px;
+}
+table.keyvalue {
+	width:100%;
+	white-space:normal;
+	overflow:hidden;
+	border-width: 0px;
+	padding: 2px;
+	border-style: hidden ;
+	border-color: gray;
+	-moz-border-radius: 0px;
+}
+tr.keyvalueheader {
+	background-color:grey;
+	width:80%;
+}
+tr.tr-0 {
+	background-color: white;
+	overflow:hidden;
+	width:80%;
+}
+tr.tr-1 {
+	background-color: gainsboro;
+	overflow:hidden;
+	width:80%;
+}
+td.edittablebutton{
+	width:16px;
+}
+div#inner {
+	margin-left:5%;
+	margin-right:5%;
+	background:white;
+/*	height:450px;*/
+}
+div#header {
+   height:103px; 
+   text-align: center;
+   background:white;
+}
+div#logo {
+	color:white;
+	float:left;
+	left:0;
+	top:0;
+	width:7em;
+	z-index:2;
+}
+div#title {
+	background-color:white;
+	border:none;
+	color:black;
+	margin:0 12em 20px;
+	min-width:120px;
+	padding:15px;
+	position:relative;
+	width:auto;
+	z-index:1;
+}
+div.clearme {
+   clear:both;
+}
+div#left {
+   width: 30%;
+   float:left;
+}
+div#right {
+   width:60%;
+	float:left;
+}
+div#side-header {
+   background:white;
+   height:30px;
+}
+div#sidebar {
+   background:white;
+   height:100%;
+   width:100%;
+	margin-left:0px;
+}
+div#editor {
+	background:white;
+	margin-left:30px;
+}
+div#new_key {
+	background:white;
+	margin-left:30px;
+}
+div#footer {
+   color:black;
+   width:100%;
+   background:grey;
+   align:center;
+}
+
+div#hidden {
+   display: none;
+}
+.application_list {
+    font-size: medium;
+    font-weight: normal;
+}
+.environment_list {
+    font-size: large;
+    font-weight: bold;
+}
