@@ -55,6 +55,31 @@ class Environment < Sequel::Model(:environments)
         end
         apps
     end
+    
+    def createCryptoKeys()
+      key = OpenSSL::PKey::RSA.generate(256)
+      public_key = key.public_key.to_pem
+      private_key = key.to_pem 
+      self.update(:public_key => public_key, :private_key => private_key)
+    end
+    
+    def copy(name)
+      newEnv = Environment.create(:name => name)
+      newEnv.createCryptoKeys() unless self.default?     
+      
+      srcEnvId = self[:id]
+      destEnvId = newEnv[:id]
+      # Copy applications into new env
+      self.appversions.each do |existingAppVersion|
+          newEnv.add_appversion(existingAppVersion)
+          # Copy overridden values
+          existingAppVersion.keys.each do |key|
+              value = Value[:key_id => key[:id], :appversion_id => existingAppVersion[:id], :environment_id => srcEnvId]
+              Value.create(:key_id => key[:id], :appversion_id => existingAppVersion[:id], :environment_id => destEnvId, :value => value[:value], :is_encrypted => value[:is_encrypted]) unless value.nil?
+          end
+      end
+      newEnv
+    end
 end
 
 EscData.init_model(Environment)

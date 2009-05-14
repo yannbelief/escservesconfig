@@ -18,4 +18,14 @@ describe Environment do
       myEnv.apps.length.should == 1
       myEnv.apps[0][:name].should == 'testapp'
   end
+  
+  it "should copy an environment" do
+     myEnv = Environment.create(:name => 'testenv')
+     myApp = App.create(:name => 'testapp')
+     myAppVersion = Appversion.create(:name => '1.0', :app_id => myApp[:id])
+     myEnv.add_appversion(myAppVersion)
+     myEnvCopy = myEnv.copy("copy")
+     myEnvCopy.apps.length.should == 1
+     myEnvCopy.apps[0][:name].should == 'testapp'
+  end
 end
