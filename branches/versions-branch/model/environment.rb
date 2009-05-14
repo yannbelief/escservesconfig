@@ -64,21 +64,23 @@ class Environment < Sequel::Model(:environments)
     end
     
     def copy(name)
-      newEnv = Environment.create(:name => name)
-      newEnv.createCryptoKeys() unless self.default?     
+      DB.transaction do
+        newEnv = Environment.create(:name => name)
+        newEnv.createCryptoKeys() unless self.default?     
       
-      srcEnvId = self[:id]
-      destEnvId = newEnv[:id]
-      # Copy applications into new env
-      self.appversions.each do |existingAppVersion|
+        srcEnvId = self[:id]
+        destEnvId = newEnv[:id]
+        # Copy applications into new env
+        self.appversions.each do |existingAppVersion|
           newEnv.add_appversion(existingAppVersion)
           # Copy overridden values
           existingAppVersion.keys.each do |key|
               value = Value[:key_id => key[:id], :appversion_id => existingAppVersion[:id], :environment_id => srcEnvId]
               Value.create(:key_id => key[:id], :appversion_id => existingAppVersion[:id], :environment_id => destEnvId, :value => value[:value], :is_encrypted => value[:is_encrypted]) unless value.nil?
           end
+        end
+        newEnv
       end
-      newEnv
     end
 end
 

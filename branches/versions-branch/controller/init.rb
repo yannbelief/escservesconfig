@@ -19,6 +19,58 @@ require 'md5'
 class EscController < Ramaze::Controller
     private
 
+    def validate_env_name(name)
+      if name && (not env_name_valid?(name))
+          respond("Invalid environment name. Valid characters are ., a-z, A-Z, 0-9, _ and -", 403)
+      end
+    end
+    
+    def validate_app_name(name)
+      if name && (not app_name_valid?(name))
+          respond("Invalid application name. Valid characters are ., a-z, A-Z, 0-9, _ and -", 403)
+      end
+    end
+    
+    def app_name_valid?(name)
+      name =~ /\A[.a-zA-Z0-9_-]+(#[0-9]+[.]{1}[0-9]+){0,1}\Z/
+    end
+    
+    def env_name_valid?(name)
+      name =~ /\A[.a-zA-Z0-9_-]+\Z/
+    end
+    
+    def key_name_valid?(name)
+      name =~ /\A[.a-zA-Z0-9_-]+\Z/
+    end
+    
+    def get_app_name(name)
+        return name.slice(0, name.index('#')) if name.index('#')
+        return name
+    end
+    
+    def get_version_name(name)
+        name.slice(name.index('#')+1, name.length) unless name.index('#').nil?
+    end
+    
+    def get_env(envName, failOnError)
+        @myEnv = Environment[:name => envName]
+        respond("Environment '#{envName}' does not exist.", 404) if @myEnv.nil? and failOnError
+        @envId = @myEnv[:id] unless @myEnv.nil?
+        @defaultId = Environment[:name => "default"][:id]
+    end
+
+    def get_app(appName, failOnError)
+        @myApp = App[:name => appName]
+        respond("Application '#{appName}' does not exist.", 404) if @myApp.nil? and failOnError
+        @appId = @myApp[:id] unless @myApp.nil?
+    end
+
+    def get_app_version(versionName, failOnError)
+          @myAppversion = Appversion[:name => versionName, :app_id =>  @appId]
+          respond("Application version'#{versionName}' does not exist.", 404) if @myAppversion.nil? and failOnError
+          @appVersionId = @myAppversion[:id] unless @myAppversion.nil?
+    end
+
     def createCryptoKeys(env, pair)
         # Create a keypair
         if env == "default"
@@ -65,6 +117,7 @@ end
 # Here go your requires for subclasses of Controller:
 require 'controller/main'
 require 'controller/environments'
+require 'controller/versions'
 require 'controller/crypt'
 require 'controller/owner'
 require 'controller/user'

@@ -20,21 +20,17 @@ class EnvironmentsController < EscController
 
     def index(env = nil, app = nil, key = nil)
         # Sanity check what we've got first
-        if env && (not env =~ /\A[.a-zA-Z0-9_-]+\Z/)
-            respond("Invalid environment name. Valid characters are ., a-z, A-Z, 0-9, _ and -", 403)
-        end
+        validate_env_name(env)
 
-        if app && (not app =~ /\A[.a-zA-Z0-9_-]+(#[0-9]+[.]{1}[0-9]+){0,1}\Z/)
-            respond("Invalid application name. Valid characters are ., a-z, A-Z, 0-9, _ and -", 403)
-        end
+        validate_app_name(app)
         
-        if key && (not key =~ /\A[.a-zA-Z0-9_-]+\Z/)
+        if key && (not key_name_valid?(key))
             respond("Invalid key name. Valid characters are ., a-z, A-Z, 0-9, _ and -", 403)
         end
 
         @env = env
-        @app = getAppName(app) unless app.nil?
-        @version = getVersionName(app) unless app.nil?
+        @app = get_app_name(app) unless app.nil?
+        @version = get_version_name(app) unless app.nil?
         @version = 'default' if @version.nil?
         @key = key
         
@@ -48,9 +44,7 @@ class EnvironmentsController < EscController
             # List all apps in specified environment
             elsif @app.nil?
                 listApps
-            # List all versions for in specified environment - currently will not be invoked -not possible to distinguish from listKeys
-            elsif @version.nil?
-                listAppVersions
+            # List all versions - see versions.rb
             # List keys and values for app version in environment
             elsif @key.nil?
                 listKeys
@@ -112,34 +106,18 @@ class EnvironmentsController < EscController
 
     private
 
-    def getAppName(name)
-        return name.slice(0, name.index('#')) if name.index('#')
-        return name
-    end
-    
-    def getVersionName(name)
-        name.slice(name.index('#')+1, name.length) unless name.index('#').nil?
-    end
-    
     def getEnv(failOnError = true)
-        @myEnv = Environment[:name => @env]
-        respond("Environment '#{@env}' does not exist.", 404) if @myEnv.nil? and failOnError
-        @envId = @myEnv[:id] unless @myEnv.nil?
-        @defaultId = Environment[:name => "default"][:id]
+      get_env(@env, failOnError)
     end
-
+    
     def getApp(failOnError = true)
-        @myApp = App[:name => @app]
-        respond("Application '#{@app}' does not exist.", 404) if @myApp.nil? and failOnError
-        @appId = @myApp[:id] unless @myApp.nil?
+      get_app(@app, failOnError)
     end
-
+    
     def getAppversion(failOnError = true)
-          @myAppversion = Appversion[:name => @version, :app_id =>  @appId]
-          respond("Application version'#{@version}' does not exist.", 404) if @myAppversion.nil? and failOnError
-          @appVersionId = @myAppversion[:id] unless @myAppversion.nil?
+      get_app_version(@version, failOnError)
     end
-
+    
     def getKey(failOnError = true)
         @myKey = @myAppversion.find_key(@key) unless @myAppversion.nil?
         respond("There is no key '#{@key}' for Application version'#{@app}-#{@version}' in Environment '#{@env}'.", 404) if @myKey.nil? and failOnError
@@ -226,20 +204,6 @@ class EnvironmentsController < EscController
 
         response.headers["Content-Type"] = "application/json"
         return apps.sort.to_json
-    end
-    
-    def listAppVersions
-        # List all app versions in specified app and environment
-        getEnv
-        getApp
-        
-        appVersions = Array.new
-        @myEnv.appversions.each do |appversion|
-            appVersions.push(appversion[:name])
-        end
-
-        response.headers["Content-Type"] = "application/json"
-        return appVersions.sort.to_json
     end
     
     def listKeys
