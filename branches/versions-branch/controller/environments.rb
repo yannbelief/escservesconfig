@@ -365,21 +365,8 @@ class EnvironmentsController < EscController
         getEnv(false)
         respond("Target environment #{@env} already exists.", 409) unless @myEnv.nil?
 
-        # Create new env
-        @myEnv = Environment.create(:name => @env)
-        createCryptoKeys(@env, "pair")      
-
-        srcEnvId = srcEnv[:id]
-        destEnvId = @myEnv[:id]
-        # Copy applications into new env
-        srcEnv.apps.each do |existingApp|
-            @myEnv.add_app(existingApp)
-            # Copy overridden values
-            existingApp.keys.each do |key|
-                value = Value[:key_id => key[:id], :environment_id => srcEnvId]
-                Value.create(:key_id => key[:id], :environment_id => destEnvId, :value => value[:value], :is_encrypted => value[:is_encrypted]) unless value.nil?
-            end
-        end
+        @myEnv = srcEnv.copy(@env)
+        respond("Created copy '#{@env}", 201)
     end
 end    
 
