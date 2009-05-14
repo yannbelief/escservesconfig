@@ -27,6 +27,15 @@ describe EnvironmentsController, 'With versioning' do
         got.body.should.include "appname"
     end
     
+    it 'should list all versions for an app on get /versions/env/appname' do
+        got = put('/environments/default/appname%231.0')
+        got.status.should == 201
+
+        got = get('/versions/default/appname')
+        got.status.should == 200
+        got.body.should.include "1.0"
+    end
+    
     it 'should be able to set a key value for a given app version in an environment' do
         got = put('/environments/default/appname%231.0')
         got.status.should == 201
