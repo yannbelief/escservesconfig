@@ -33,7 +33,7 @@ describe EnvironmentsController, 'With versioning' do
 
         got = get('/versions/default/appname')
         got.status.should == 200
-        got.body.should.include "1.0"
+        got.body.should == "[\"1.0\",\"default\"]"
     end
     
     it 'should be able to set a key value for a given app version in an environment' do

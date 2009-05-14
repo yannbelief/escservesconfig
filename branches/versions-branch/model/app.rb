@@ -55,7 +55,7 @@ class App < Sequel::Model(:apps)
           end 
           theAppVersion = Appversion.create(:name => versionName, :app_id => theApp[:id], :parent_id => parent_id)
         end
-        env.add_appversion(theAppVersion) 
+        env.add_appversion(theAppVersion) if !env.has_version(theAppVersion) 
         theAppVersion
       end
     end
