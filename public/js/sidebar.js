@@ -24,11 +24,28 @@ var EscSidebar = function() {
             var url = "/environments/" + envName;
             $.getJSON(url, function(appData) {
                 var appList = '<ul class="application_list" style="display: none;"';
-                $.each(appData, function(appId, thisApp) {
+                $.each(appData, function(appId, appWithVersions) {
+					thisApp = appWithVersions[0]
+					versions = appWithVersions[1] 
                     appList += ("<li id='" + thisApp + "' class='application'>");
-                    appList += ("<img class='appdelete' src='/images/delete.png' alt='Delete " + thisApp +" application'/>");
-                    appList += ("<img class='appedit' src='/images/edit.png' alt='Edit " + thisApp +" application'/>");
+                    //appList += ("<img class='appdelete' src='/images/delete.png' alt='Delete " + thisApp +" application'/>&nbsp;");
+                    //appList += ("<img class='appedit' src='/images/edit.png' alt='Edit " + thisApp +" application'/>");
                     appList += ("<span class='appName'>" + thisApp + "</span></li>");
+					var versionList = '<li><ul id="' + thisApp + '_versionlist" class="version_list">';
+		            $.each(versions, function(versionId, thisVersionWithParent) {
+						var thisVersion = thisVersionWithParent[0];
+						var parent = thisVersionWithParent[1];
+						var parentInfo = '';
+						if (parent != '') {
+							parentInfo = " (" + parent + ")";
+						}
+						versionList += ("<li id='" + thisApp + thisVersion + "' envName='" + envName +"' appName='" + thisApp + "' versionName='" + thisVersion + "' class='version'>");
+						versionList += ("<img class='versiondelete' src='/images/delete.png' alt='Delete " + thisVersion +" version'/>&nbsp;");
+		                versionList += ("<img class='versionedit' src='/images/edit.png' alt='Edit " + thisVersion +" version'/>&nbsp;");
+		                versionList += ("<span class='versionName'>" + thisVersion + parentInfo + "</span></li>");
+					});
+					versionList += '</ul></li>';
+					appList += versionList;
                 });
                 appList += ('<li><form id="' + envName + '_new_app_form" class="new_app_form" action="javascript:void(0);">');
                 appList += ('<img src="/images/add.png" alt="Add a new application" />&nbsp;');
@@ -107,6 +124,24 @@ var EscSidebar = function() {
             });
         },
 
+		createNewAppVersion : function() {
+            var envName = $(this).find(":hidden").val("");
+			var appName = $(this).attr("id").replace('_new_version_form', '');
+            var versionName = $(this).find(":input").val();
+            $(this).find(":input").val("");
+            $.ajax({
+                type: "PUT",
+                url: "/environments/" + envName + "/" + appName + "/" + versionName,
+                data: {},
+                success: function(data, textStatus) {
+                    EscSidebar.loadEnvironments();
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    alert("Error creating new application '" + newName +"': " + XMLHttpRequest.responseText);
+                },
+            });
+        },
+
         copyEnvironment : function() {
             var envName = $(this).attr("id").replace('_copy_form', '');
             var newEnvName = $(this).find(":input").val();
@@ -160,14 +195,16 @@ var EscSidebar = function() {
         hideEditor : function() {
             $('#new_user').hide();
             $('#new_key').hide();
+			$('#new_version').hide();
             $('#editor').hide();
         },
 
-        showEditor : function(env, app) {
+        showEditor : function(env, app, version) {
             EscSidebar.hideEditor();
             if ((app != null) && (app != "") && (env != null) && (env != "")) {
-                EscEditor.editPropertiesFor(env, app);
+                EscEditor.editPropertiesFor(env, app, version);
                 $('#new_key').show();
+				$('#new_version').show();
                 $('#editor').show();
             };
         },
@@ -226,17 +263,12 @@ $(document).ready(function() {
         EscSidebar.toggleEnv($(this).text(), $(this).siblings('.expander_img'));
     });
 
-    $('.appName').live("click", function() {
-        var thisEnv = $(this).parent().parent().siblings("span").text();
-        var thisApp = $(this).text();
-        EscSidebar.showEditor(thisEnv, thisApp);
-    });
-
-    // Click on an app edit button to get stuff in the content pane
-    $('.appedit').live("click", function() {
-        var thisEnv = $(this).parent().parent().siblings("span").text();
-        var thisApp = $(this).parent().text();
-        EscSidebar.showEditor(thisEnv, thisApp);
+    // Click on an version edit button to get stuff in the content pane
+    $('.versionedit').live("click", function() {
+        var thisEnv = $(this).parent().attr("envName");
+		var thisApp = $(this).parent().attr("appName");
+        var thisVersion = $(this).parent().attr("versionName");
+        EscSidebar.showEditor(thisEnv, thisApp, thisVersion);
     });
 
     // Click on an env edit button to get stuff in the content pane
@@ -248,23 +280,24 @@ $(document).ready(function() {
     // Grab ownership of an environment
 
     // Click on an app delete button
-    $('.appdelete').live("click", function() {
-        var thisEnv = $(this).parent().parent().siblings("span").text();
-        var thisApp = $(this).parent().text();
-		var confirmation = confirm('Are you sure you want to delete ' + thisApp + '?');
+    $('.versiondelete').live("click", function() {
+        var thisEnv = $(this).parent().attr("envName");
+		var thisApp = $(this).parent().attr("appName");
+        var thisVersion = $(this).parent().attr("versionName");
+		var confirmation = confirm('Are you sure you want to delete version ' + thisVersion + ' of ' + thisApp + '?');
 
         if ((confirmation) && (thisApp != null) && (thisApp != "")) {
-			// Delete the app
+			// Delete the appversion
 			$.ajax({
                 type: "DELETE",
-                url: "/environments/" + thisEnv + "/" + thisApp,
+                url: "/environments/" + thisEnv + "/" + thisApp + "%23" + thisVersion,
                 data: {},
                 success: function(data, textStatus) {
                     EscSidebar.hideEditor();
                     EscSidebar.loadEnvironments();
                 },
                 error: function(XMLHttpRequest, textStatus, errorThrown) {
-                    alert("Error deleting '" + thisApp +"': " + XMLHttpRequest.responseText);
+                    alert("Error deleting '" + thisApp + "-" + thisVersion + "': " + XMLHttpRequest.responseText);
                 },
             })
         };

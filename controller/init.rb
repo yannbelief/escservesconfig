@@ -32,7 +32,7 @@ class EscController < Ramaze::Controller
     end
     
     def app_name_valid?(name)
-      name =~ /\A[.a-zA-Z0-9_-]+(#[0-9]+[.]{1}[0-9]+){0,1}\Z/
+      name =~ /\A[.a-zA-Z0-9_-]+(#(([0-9]+[.]{1}[0-9]+)|default)){0,1}\Z/
     end
     
     def env_name_valid?(name)

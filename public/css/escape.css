@@ -22,6 +22,9 @@ li.environment {
 li.application {
 	background:white;
 }
+li.version {
+	background:white;
+}
 li.newitem {
 	background:white;
 }
@@ -151,6 +154,10 @@ div#hidden {
    display: none;
 }
 .application_list {
+    font-size: medium;
+    font-weight: normal;
+}
+.version_list {
     font-size: medium;
     font-weight: normal;
 }

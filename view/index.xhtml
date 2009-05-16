@@ -55,15 +55,24 @@
 	                <input type="text" onFocus="EscSidebar.clearDefault(this)" onBlur="EscSidebar.setDefault(this)" id="new_user_email" name="new_user_email" value="User Email"/><br/> 
 	                <input type="text" onFocus="EscSidebar.clearDefault(this); this.type='password';" onBlur="EscSidebar.setDefault(this)" id="new_user_pass1" name="new_user_pass1" value="User Password"/><br/> 
 	                <input type="text" onFocus="EscSidebar.clearDefault(this); this.type='password';" onBlur="EscSidebar.setDefault(this)" id="new_user_pass2" name="new_user_pass2" value="Verify Password"/><br/> 
-                    <img src="/images/add.png" alt="Add a new key" />&nbsp;<input type="submit" value="Add User"/>
+                    <img src="/images/add.png" alt="Add a new user" />&nbsp;<input type="submit" value="Add User"/>
 	            </form>
                 <br/>
 			</div>			
 			<div id="new_key" style="display: none;">
 	            <form id="new_key_form" action="javascript:void(0);">
 	                <input type="hidden" id="key_env_name" name="key_env_name"/> 
-	                <input type="hidden" id="key_app_name" name="key_app_name"/> 
+	                <input type="hidden" id="key_app_name" name="key_app_name"/>
+					<input type="hidden" id="key_version_name" name="key_version_name"/> 
 	                <img src="/images/add.png" alt="Add a new key" />&nbsp;<input type="text" onFocus="EscSidebar.clearDefault(this)" onBlur="EscSidebar.setDefault(this)" id="new_key_name" name="new_key_name" value="Add Key"/> 
+	            </form>
+			</div>
+			<div id="new_version" style="display: none;">
+	            <form id="new_version_form" action="javascript:void(0);">
+	                <input type="hidden" id="version_env_name" name="version_env_name"/> 
+	                <input type="hidden" id="version_app_name" name="version_app_name"/>
+					<input type="hidden" id="version_parent_name" name="version_parent_name"/>  
+	                <img src="/images/add.png" alt="Add a new child version" />&nbsp;<input type="text" onFocus="EscSidebar.clearDefault(this)" onBlur="EscSidebar.setDefault(this)" id="new_version_name" name="new_version_name" value="Add Child Version"/> 
 	            </form>
 			</div>			
 		</div>

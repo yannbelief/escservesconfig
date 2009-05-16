@@ -49,6 +49,19 @@ describe EnvironmentsController, 'With versioning' do
         got.body.should.include "key1=v1"
     end
     
+    it 'should be able to set a key value for a default app version in an environment' do
+        got = put('/environments/default/appname%23default')
+        got.status.should == 201
+
+        value = 'v1'
+        got = put('/environments/default/appname%23default/key1',  :input => value)
+        got.status.should == 201
+        
+        got = get('/environments/default/appname%23default')
+        got.status.should == 200
+        got.body.should.include "key1=v1"
+    end
+    
     it 'should be update a key value for a given app version in an environment' do
         got = put('/environments/default/appname%231.0')
         got.status.should == 201
