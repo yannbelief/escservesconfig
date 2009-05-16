@@ -196,14 +196,8 @@ class EnvironmentsController < EscController
     def listApps
         # List all apps in specified environment
         getEnv
-
-        apps = Array.new
-        @myEnv.apps.each do |app|
-            apps.push(app[:name])
-        end
-
         response.headers["Content-Type"] = "application/json"
-        return apps.sort.to_json
+        return @myEnv.apps.to_json
     end
     
     def listKeys

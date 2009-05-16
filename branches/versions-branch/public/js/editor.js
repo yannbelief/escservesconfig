@@ -131,23 +131,27 @@ var EscEditor = function() {
             }
 		},
         
-        editPropertiesFor : function(env, app) {
+        editPropertiesFor : function(env, app, version) {
             $('#editor').empty(); 
 
             $.ajax({
                 type: "GET",
-                url: "/environments/" + env + "/" + app,
+                url: "/environments/" + env + "/" + app + "%23" + version,
 				complete: function(XMLHttpRequest, textStatus) {
 			       if ( textStatus == "success" ) {
 						var keyValues = EscEditor.createKeyValues(XMLHttpRequest.responseText,
 							jsonParse(XMLHttpRequest.getResponseHeader("X-Encrypted")),
 							jsonParse(XMLHttpRequest.getResponseHeader("X-Override-Values")), 
 							jsonParse(XMLHttpRequest.getResponseHeader("X-Default-Values")));
-                    	$('#editor').html("<center><h3><b><font size='+1'>" + app + "</font></b> in <b><font size='+1'>" + env + "</font></b></center><br />");
+                    	$('#editor').html("<center><h3><b><font size='+1'>" + app + "</font></b> version <b><font size='+1'>" + version + "</font></b> in environment <b><font size='+1'>" + env + "</font></b></center><br />");
                     	var table = EscEditor.createTableForKeyValues(keyValues);
 						$('#editor').append(table);
                     	$('#key_env_name').val(env);
                     	$('#key_app_name').val(app);
+						$('#key_version_name').val(version);
+						$('#version_env_name').val(env);
+	                    $('#version_app_name').val(app);
+						$('#version_parent_name').val(version);
 				    	// Click on a key delete button
 				    	$('.keydelete').click(function() {
 							var thisKey = $(this).parent().siblings("th").text();
@@ -157,11 +161,11 @@ var EscEditor = function() {
 								// Delete the key
 								$.ajax({
 				                	type: "DELETE",
-				                	url: "/environments/" + env + "/" + app + "/" + thisKey,
+				                	url: "/environments/" + env + "/" + app + "%23" + version + "/" + thisKey,
 				                	data: {},
 				                	success: function(data, textStatus) {
 										$('#editor').empty(); 
-				                    	EscSidebar.showEditor(env, app);
+				                    	EscSidebar.showEditor(env, app, version);
 				                	},
 				                	error: function(XMLHttpRequest, textStatus, errorThrown) {
 				                    	alert("Error deleting '" + thisKey +"': " + XMLHttpRequest.responseText);
@@ -178,11 +182,11 @@ var EscEditor = function() {
 								// Encrypt the key
 								$.ajax({
 					                type: "PUT",
-					                url: "/environments/" + env + "/" + app + "/" + thisKey + "?encrypt",
+					                url: "/environments/" + env + "/" + app + "%23" + version + "/" + thisKey + "?encrypt",
 					                data: thisValue,
 					                success: function(data, textStatus) {
 										$('#editor').empty(); 
-					                    EscSidebar.showEditor(env, app);
+					                    EscSidebar.showEditor(env, app, version);
 					                },
 					                error: function(XMLHttpRequest, textStatus, errorThrown) {
 					                    alert("Error encrypting '" + thisKey +"': " + XMLHttpRequest.responseText);
@@ -198,7 +202,7 @@ var EscEditor = function() {
                             	var value = td.text();
                             	$.ajax({
                                 	type: "PUT",
-                                	url: "/environments/" + env + "/" + app + "/" + key,
+                                	url: "/environments/" + env + "/" + app + "%23" + version + "/"+ key,
                                 	data: value,
                                 	complete: function(XMLHttpRequest, textStatus) {
                                     	$('#app_list').change();  
@@ -209,7 +213,7 @@ var EscEditor = function() {
 					}
                 },
                 error: function(XMLHttpRequest, textStatus, errorThrown) {
-                    alert("Error getting properties for app '" + app + "' in environment '" + env + "'");
+                    alert("Error getting properties for version '" + version + "' for app '" + app + "' in environment '" + env + "'");
                 },
             });
         },
@@ -280,14 +284,14 @@ var EscEditor = function() {
             $('#new_user_pass2').blur();
         },
 
-		addKey : function(newName, envName, appName) {
+		addKey : function(keyName, envName, appName, versionName) {
 			$('#new_key_name').val("");
             $.ajax({
                 type: "PUT",
-                url: "/environments/" + envName + "/" + appName + "/" + newName,
+                url: "/environments/" + envName + "/" + appName + "%23" + versionName + "/" + keyName,
                 data: "",
                 complete: function(XMLHttpRequest, textStatus) {
-                    EscEditor.editPropertiesFor(envName, appName);
+                    EscEditor.editPropertiesFor(envName, appName, versionName);
                 },
             });
 		}
@@ -302,21 +306,39 @@ $(document).ready(function() {
         var newName = $('#new_key_name').val();
         var envName = $('#key_env_name').val();
         var appName = $('#key_app_name').val();
+		var versionName = $('#key_version_name').val();
         if (EscEditor.validateName(newName, envName, appName)) {
             $.ajax({
                 type: "GET",
-                url: "/environments/" + envName + "/" + appName,
+                url: "/environments/" + envName + "/" + appName + "%23" + versionName,
                 success: function(data, textStatus) {
 					if ( data.search(newName + '=') > -1) {
 						alert(newName + ' exists!');
 					} else {
-						EscEditor.addKey(newName, envName, appName);	
+						EscEditor.addKey(newName, envName, appName, versionName);	
 					}
 				},
 			});
         } else {
             alert("Not going to create new key called " + newName);
         }
+    });
+
+	$('#new_version_form').submit(function() {
+        var newName = $('#new_version_name').val();
+        var envName = $('#version_env_name').val();
+        var appName = $('#version_app_name').val();
+		var parentName = $('#version_parent_name').val();
+		$('#new_version_name').val("");
+        $.ajax({
+        	type: "PUT",
+            url: "/environments/" + envName + "/" + appName + "%23" + newName,
+			data: parentName,
+            success: function(data, textStatus) {
+				 EscSidebar.loadEnvironments();
+				 EscEditor.editPropertiesFor(envName, appName, newName);
+			}
+		});
     });
 
     $('#new_user_form').submit(function() {

@@ -22,8 +22,9 @@ describe EnvironmentsController, 'Environment bits' do
     # Environment tests
     
     it 'should allow versions in appname' do
-        'foo'.match(/\A[.a-zA-Z0-9_-]+(#[0-9]+[.]{1}[0-9]+){0,1}\Z/).nil?.should == false
-        'foo#1.0'.match(/\A[.a-zA-Z0-9_-]+(#[0-9]+[.]{1}[0-9]+){0,1}\Z/).nil?.should == false
+        'foo'.match(/\A[.a-zA-Z0-9_-]+(#(([0-9]+[.]{1}[0-9]+)|default)){0,1}\Z/).nil?.should == false
+        'foo#1.0'.match(/\A[.a-zA-Z0-9_-]+(#(([0-9]+[.]{1}[0-9]+)|default)){0,1}\Z/).nil?.should == false
+        'foo#default'.match(/\A[.a-zA-Z0-9_-]+(#(([0-9]+[.]{1}[0-9]+)|default)){0,1}\Z/).nil?.should == false
     end
     
     it 'should not accept put on /environments' do
@@ -70,14 +71,14 @@ describe EnvironmentsController, 'Environment bits' do
 
         got = get('/environments/myenv')
         got.status.should == 200
-        got.body.should == '["myapp"]'
+        got.body.should == "[[\"myapp\",[[\"default\",\"\"]]]]"
         
         got = put('/environments/myenv')
         got.status.should == 200
 
         got = get('/environments/myenv')
         got.status.should == 200
-        got.body.should == '["myapp"]'
+        got.body.should == "[[\"myapp\",[[\"default\",\"\"]]]]"
     end
 
     it 'should only accept \A[.a-zA-Z0-9_-]+\Z as environment name' do

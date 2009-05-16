@@ -94,14 +94,14 @@ describe EnvironmentsController, 'Application bits' do
 
         got = get('/environments/default')
         got.status.should == 200
-        got.body.should == '["appname"]'
+        got.body.should == "[[\"appname\",[[\"default\",\"\"]]]]"
         
         got = put('/environments/default/appname')
         got.status.should == 200
 
         got = get('/environments/default')
         got.status.should == 200
-        got.body.should == '["appname"]'
+        got.body.should == "[[\"appname\",[[\"default\",\"\"]]]]"
     end
 
     it 'should only add apps to specified environments once' do
@@ -113,14 +113,14 @@ describe EnvironmentsController, 'Application bits' do
 
         got = get('/environments/myenv')
         got.status.should == 200
-        got.body.should == '["appname"]'
+        got.body.should == "[[\"appname\",[[\"default\",\"\"]]]]"
         
         got = put('/environments/myenv/appname')
         got.status.should == 201
 
         got = get('/environments/myenv')
         got.status.should == 200
-        got.body.should == '["appname"]'
+        got.body.should == "[[\"appname\",[[\"default\",\"\"]]]]"
     end
 
     it 'should only accept \A[.a-zA-Z0-9_-]+\Z as app name' do
@@ -145,7 +145,7 @@ describe EnvironmentsController, 'Application bits' do
         got.status.should == 201
         got = get('/environments/myenv')
         got.status.should == 200
-        got.body.should == '["myapp"]'
+        got.body.should == "[[\"myapp\",[[\"default\",\"\"]]]]"
 
         got = get('/environments/myenv/myapp')
         got.status.should == 200
