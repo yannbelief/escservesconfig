@@ -94,7 +94,7 @@ class EnvironmentsController < EscController
             # You're deleting default version of app
             elsif @version.nil?
                 deleteAppVersion
-            # You're deleting an app version
+            # You're deleting the given app version
             elsif @key.nil?
                 deleteAppVersion
             # You're deleting a key
@@ -266,9 +266,10 @@ class EnvironmentsController < EscController
 
     def createEnv
         respond("Environment '#{@env}' already exists.", 200) if Environment[:name => @env]
-
-        @myEnv = Environment.create(:name => @env)
-        createCryptoKeys(@env, "pair")      
+        DB.transaction do
+          @myEnv = Environment.create(:name => @env)
+          createCryptoKeys(@env, "pair")
+        end   
         respond("Environment created.", 201)
     end
 
@@ -287,6 +288,7 @@ class EnvironmentsController < EscController
         @myAppversion = App.create_version(@app, @version, parentVersion, @myEnv)
         
         respond("Application '#{@app}' with version '#{@version}' with parent '#{parentVersionName}' created in environment '#{@env}'.", 201)
+        
     end
 
     def setValue

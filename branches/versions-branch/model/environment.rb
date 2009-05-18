@@ -70,11 +70,11 @@ class Environment < Sequel::Model(:environments)
       
         srcEnvId = self[:id]
         destEnvId = newEnv[:id]
-        # Copy applications into new env
+        # Copy versions into new env
         self.appversions.each do |existingAppVersion|
           newEnv.add_appversion(existingAppVersion)
           # Copy overridden values
-          existingAppVersion.keys.each do |key|
+          existingAppVersion.all_keys.each do |key|
               value = Value[:key_id => key[:id], :appversion_id => existingAppVersion[:id], :environment_id => srcEnvId]
               Value.create(:key_id => key[:id], :appversion_id => existingAppVersion[:id], :environment_id => destEnvId, :value => value[:value], :is_encrypted => value[:is_encrypted]) unless value.nil?
           end
