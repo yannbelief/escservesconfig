@@ -150,4 +150,23 @@ describe "ESCAPE Management Interface" do
         page.get_text('//table[@id="key_value_table"]//tbody//tr//td[@id="default.key"]').should == "rubber"
     end
     
+    it "should be able to add a child version" do
+      page.open("/")
+      # Click on zoo env
+      page.wait_for_element('//span[@class="envName" and text()="zoo"]')
+      page.click('//span[@class="envName" and text()="zoo"]')
+      # Wait for apps to load
+      page.wait_for_element('//li[@id="zoo"]//ul[@class="application_list"]//form[@class="new_app_form"]//input[@id="new_app_name"]')
+      # Click on cage app default version 
+      page.click('//li[@id="zoocagedefault"]/img[2]')
+      # Wait for key/value table to load
+      page.wait_for_element('//table[@id="key_value_table"]')
+      # Click in add child version box
+      page.click('//input[@id="new_version_name"]')
+      # Add key default.key
+      page.type('//input[@id="new_version_name"]', "1.0")
+      page.key_press('//input[@id="new_version_name"]', '13')
+      page.wait_for_element('//li[@id="zoocage1.0"]/span')
+    end
+    
 end
