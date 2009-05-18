@@ -39,7 +39,7 @@ var EscSidebar = function() {
 						if (parent != '') {
 							parentInfo = " (" + parent + ")";
 						}
-						versionList += ("<li id='" + thisApp + thisVersion + "' envName='" + envName +"' appName='" + thisApp + "' versionName='" + thisVersion + "' class='version'>");
+						versionList += ("<li id='" + envName + thisApp + thisVersion + "' envName='" + envName +"' appName='" + thisApp + "' versionName='" + thisVersion + "' class='version'>");
 						versionList += ("<img class='versiondelete' src='/images/delete.png' alt='Delete " + thisVersion +" version'/>&nbsp;");
 		                versionList += ("<img class='versionedit' src='/images/edit.png' alt='Edit " + thisVersion +" version'/>&nbsp;");
 		                versionList += ("<span class='versionName'>" + thisVersion + parentInfo + "</span></li>");
@@ -279,7 +279,7 @@ $(document).ready(function() {
 
     // Grab ownership of an environment
 
-    // Click on an app delete button
+    // Click on an app version delete button
     $('.versiondelete').live("click", function() {
         var thisEnv = $(this).parent().attr("envName");
 		var thisApp = $(this).parent().attr("appName");
