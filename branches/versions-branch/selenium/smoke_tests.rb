@@ -150,15 +150,15 @@ describe "ESCAPE Management Interface" do
         page.get_text('//table[@id="key_value_table"]//tbody//tr//td[@id="default.key"]').should == "rubber"
     end
     
-    it "should be able to add a child version" do
+    it "should be able to add a child version for an app in the default env" do
       page.open("/")
-      # Click on zoo env
-      page.wait_for_element('//span[@class="envName" and text()="zoo"]')
-      page.click('//span[@class="envName" and text()="zoo"]')
+      # Click on default env
+      page.wait_for_element('//span[@class="envName" and text()="default"]')
+      page.click('//span[@class="envName" and text()="default"]')
       # Wait for apps to load
-      page.wait_for_element('//li[@id="zoo"]//ul[@class="application_list"]//form[@class="new_app_form"]//input[@id="new_app_name"]')
+      page.wait_for_element('//li[@id="default"]//ul[@class="application_list"]//form[@class="new_app_form"]//input[@id="new_app_name"]')
       # Click on cage app default version 
-      page.click('//li[@id="zoocagedefault"]/img[2]')
+      page.click('//li[@id="defaultcagedefault"]/img[2]')
       # Wait for key/value table to load
       page.wait_for_element('//table[@id="key_value_table"]')
       # Click in add child version box
@@ -166,6 +166,18 @@ describe "ESCAPE Management Interface" do
       # Add key default.key
       page.type('//input[@id="new_version_name"]', "1.0")
       page.key_press('//input[@id="new_version_name"]', '13')
+      page.wait_for_element('//li[@id="defaultcage1.0"]/span')
+    end
+    
+    it "should be able to add the 1.0 version to the zoo env" do
+      page.open("/")
+      # Click on default env
+      page.wait_for_element('//span[@class="envName" and text()="zoo"]')
+      page.click('//span[@class="envName" and text()="zoo"]')
+      # Wait for input box for adding a version to load
+      page.wait_for_element('//li[@id="zoo"]//ul[@class="application_list"]//form[@class="add_appversion_form"]//input[@id="new_appversion_name"]')
+      page.type('//input[@id="new_appversion_name"]', "1.0")
+      page.key_press('//input[@id="new_appversion_name"]', '13')
       page.wait_for_element('//li[@id="zoocage1.0"]/span')
     end
     

@@ -8,13 +8,8 @@ describe EnvironmentsController, 'With versioning' do
     ramaze  :view_root => __DIR__('../view'),
             :public_root => __DIR__('../public')
 
-    def encode_credentials(username, password)
-        "Basic " + Base64.encode64("#{username}:#{password}")
-    end
-    
     before do
         reset_db
-        @me = Owner.create(:name => "me", :email => "me", :password => MD5.hexdigest("me"))
     end
 
     # App tests
@@ -34,6 +29,38 @@ describe EnvironmentsController, 'With versioning' do
         got = get('/versions/default/appname')
         got.status.should == 200
         got.body.should == "[\"1.0\",\"default\"]"
+    end
+     
+    it 'should add existing version to env on put /versions/env/appname#1.0' do
+        got = put('/environments/default/appname%231.0')
+        got.status.should == 201
+
+        # create env 'myenv'
+        got = put('/environments/myenv')
+        got.status.should == 201
+        
+        # add default version of appname to it
+        got = put('/environments/myenv/appname')
+        got.status.should == 201
+        
+        # 'myenv' should have only the default version
+        got = get('/versions/myenv/appname')
+        got.status.should == 200
+        got.body.should == "[\"default\"]"
+        
+        # add existing version 1.0 to myenv
+        got = put('/versions/myenv/appname%231.0')
+        got.status.should == 200
+        
+        got = get('/versions/myenv/appname')
+        got.status.should == 200
+        got.body.should == "[\"1.0\",\"default\"]"
+        
+    end
+    
+    it 'should not add non-existing version to env on put /versions/env/appname#1.0' do
+        got = put('/versions/default/appname%231.0')
+        got.status.should == 404
     end
     
     it 'should be able to set a key value for a given app version in an environment' do
@@ -192,8 +219,8 @@ describe EnvironmentsController, 'With versioning' do
     it 'should not delete app version 1.0 from default if it is used in other non-default envs' do   
         got = put('/environments/mine')
         got.status.should == 201
-          
-        got = raw_mock_request(:put, '/environments/mine/appname%231.0', 'HTTP_AUTHORIZATION' => encode_credentials("me", "me"))
+        
+        got = put('/environments/mine/appname%231.0')
         got.status.should == 201
         
         got = get('/environments/default/appname%231.0')
