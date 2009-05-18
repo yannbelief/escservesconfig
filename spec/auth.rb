@@ -100,6 +100,22 @@ describe AuthController do
         got.status.should == 404
     end
 
+    it "should allow only owners to add a version to an environment" do
+        # add appname v 1.0 to default env - this creates the app and the version.
+        got = put('/environments/default/appname%231.0')
+        got.status.should == 201
+
+        # create env 'myenv'
+        got = put('/environments/myenv')
+        got.status.should == 201
+
+        got = raw_mock_request(:post, '/owner/myenv', 'HTTP_AUTHORIZATION' => encode_credentials("me", "me"))
+        got.status.should == 200
+
+        got = put('/versions/myenv/appname%231.0')
+        got.status.should == 401
+    end
+    
     it 'should be able to copy an environment owned by someone else without needing auth' do
         got = put('/environments/mine')
         got.status.should == 201

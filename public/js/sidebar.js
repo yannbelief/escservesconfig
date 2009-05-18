@@ -46,6 +46,10 @@ var EscSidebar = function() {
 					});
 					versionList += '</ul></li>';
 					appList += versionList;
+					appList += ('<li><ul><li><form id="' + envName + thisApp + '_add_appversion_form" envName="' + envName + '" appName="' + thisApp + '" class="add_appversion_form" action="javascript:void(0);">');
+			        appList += ('<img src="/images/add.png" alt="Add an existing version" />&nbsp;');
+			        appList += ('<input type="text" size="10" onFocus="EscSidebar.clearDefault(this)" onBlur="EscSidebar.setDefault(this)" id="new_appversion_name" value="Add Version"/>');
+			        appList += ('</form></li></ul></li>');
                 });
                 appList += ('<li><form id="' + envName + '_new_app_form" class="new_app_form" action="javascript:void(0);">');
                 appList += ('<img src="/images/add.png" alt="Add a new application" />&nbsp;');
@@ -58,7 +62,8 @@ var EscSidebar = function() {
                 var envObj = $('#sidebar .environment:eq(' + envId + ')');
                 envObj.append(appList);
                 envObj.children('ul').slideDown('fast');
-                $('#sidebar' + " .new_app_form").submit(EscSidebar.createNewApp);
+                $('#sidebar' + " .add_appversion_form").submit(EscSidebar.addAppVersion);
+				$('#sidebar' + " .new_app_form").submit(EscSidebar.createNewApp);
 				$('#sidebar' + " .copy_form").submit(EscSidebar.copyEnvironment);
             });
         },
@@ -124,20 +129,20 @@ var EscSidebar = function() {
             });
         },
 
-		createNewAppVersion : function() {
-            var envName = $(this).find(":hidden").val("");
-			var appName = $(this).attr("id").replace('_new_version_form', '');
+		addAppVersion : function() {
+            var envName = $(this).attr("envName");
+			var appName = $(this).attr("appName");
             var versionName = $(this).find(":input").val();
             $(this).find(":input").val("");
             $.ajax({
                 type: "PUT",
-                url: "/environments/" + envName + "/" + appName + "/" + versionName,
+                url: "/versions/" + envName + "/" + appName + "%23" + versionName,
                 data: {},
                 success: function(data, textStatus) {
                     EscSidebar.loadEnvironments();
                 },
                 error: function(XMLHttpRequest, textStatus, errorThrown) {
-                    alert("Error creating new application '" + newName +"': " + XMLHttpRequest.responseText);
+                    alert("Error adding version '" + versionName +"': " + XMLHttpRequest.responseText);
                 },
             });
         },

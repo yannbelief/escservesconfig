@@ -20,7 +20,9 @@ class VersionsController < EscController
        validate_app_name(app)
        
        if request.get?
-         listAppVersions(env, get_app_name(app))
+         list_app_versions(env, get_app_name(app))
+       elsif request.put?
+         add_version_to_env(env, get_app_name(app), get_version_name(app))
        else
          response.status = 400
        end
@@ -29,17 +31,27 @@ class VersionsController < EscController
     
     private
     
-    def listAppVersions(envName, appName)
-          # List all app versions in specified app and environment
-          get_env(envName, true)
-          get_app(appName, true)
+    def add_version_to_env(envName, appName, versionName)
+        get_env(envName, true)
+        check_auth(@myEnv.owner.name, "Environment #{envName}")
+        get_app(appName, true)
+        get_app_version(versionName, true)
+        
+        @myEnv.add_appversion(@myAppversion)
+        respond("Version added.", 200)
+    end
+    
+    def list_app_versions(envName, appName)
+        # List all app versions in specified app and environment
+        get_env(envName, true)
+        get_app(appName, true)
 
-          appVersions = Array.new
-          @myEnv.appversions.each do |appversion|
-              appVersions.push(appversion[:name])
-          end
+        appVersions = Array.new
+        @myEnv.appversions.each do |appversion|
+            appVersions.push(appversion[:name])
+        end
 
-          response.headers["Content-Type"] = "application/json"
-          return appVersions.sort.to_json
+        response.headers["Content-Type"] = "application/json"
+        return appVersions.sort.to_json
     end
 end
