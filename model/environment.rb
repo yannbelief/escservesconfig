@@ -56,6 +56,14 @@ class Environment < Sequel::Model(:environments)
         apps
     end
     
+    def apps_with_versions
+        result = Array.new
+        self.apps.each do |app|
+            result.push([app[:name], app.versions_in_env(self)])
+        end
+        result
+    end
+    
     def createCryptoKeys()
       key = OpenSSL::PKey::RSA.generate(256)
       public_key = key.public_key.to_pem

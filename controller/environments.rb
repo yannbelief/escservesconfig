@@ -194,10 +194,10 @@ class EnvironmentsController < EscController
     end
 
     def listApps
-        # List all apps in specified environment
+        # List all apps and versions in specified environment
         getEnv
         response.headers["Content-Type"] = "application/json"
-        return @myEnv.apps.to_json
+        return JSON.generate @myEnv.apps_with_versions
     end
     
     def listKeys

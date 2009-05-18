@@ -21,6 +21,15 @@ describe App do
     myApp.to_json.should == "[\"testapp\",[[\"default\",\"\"],[\"1.0\",\"default\"]]]"
   end
   
+  it "should only return app versions in the given env" do
+    myEnv = Environment.create(:name => 'testenv')
+    myApp = App.create(:name => 'testapp')
+    appVersion1 = Appversion.create(:name => '1.0', :parent_id => myApp.default_version[:id], :app_id => myApp[:id])
+    appVersion2 = Appversion.create(:name => '2.0', :parent_id => myApp.default_version[:id], :app_id => myApp[:id])
+    myEnv.add_appversion(appVersion1)
+    myApp.versions_in_env(myEnv).should == [["1.0", "default"]]
+  end
+  
   it "create_version should create an app and app version with default version as parent, when app does not exist and parent is nil" do
     myEnv = Environment.create(:name => 'testenv')
     appName = 'appName'
