@@ -52,6 +52,18 @@ class App < Sequel::Model(:apps)
       JSON.generate [self[:name], versionsInfo]
     end
     
+    def versions_in_env(env)
+      versionsInfo = Array.new
+      self.versions.each do |v|
+        if env.has_version(v)
+          parentName = ''
+          parentName = v.parent[:name] unless v.parent.nil?
+          versionsInfo.push([v[:name], parentName])
+        end
+      end
+      versionsInfo
+    end
+    
     def self.create_version(appName, versionName, parentVersion, env)
       DB.transaction do
         theApp = App[:name => appName]

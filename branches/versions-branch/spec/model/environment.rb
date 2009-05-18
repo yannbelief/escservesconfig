@@ -19,6 +19,15 @@ describe Environment do
       myEnv.apps[0][:name].should == 'testapp'
   end
   
+  it "should return apps with versions for environment" do
+      myEnv = Environment.create(:name => 'testenv')
+      myApp = App.create(:name => 'testapp')
+      myAppVersion = Appversion.create(:name => '1.0', :app_id => myApp[:id])
+      myEnv.add_appversion(myAppVersion)
+      myEnv.apps_with_versions.length.should == 1
+      myEnv.apps_with_versions.should == [["testapp", [["1.0", ""]]]]
+  end
+  
   it "should copy an environment" do
      myEnv = Environment.create(:name => 'testenv')
      myApp = App.create(:name => 'testapp')
