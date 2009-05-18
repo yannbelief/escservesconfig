@@ -56,15 +56,15 @@ describe "ESCAPE Management Interface" do
         page.is_element_present('//li[@id="default"]//ul[@class="application_list"]//li[@class="application" and @id="cage"]').should == true
     end
 
-    it "should be able to add a key to the new app in default" do
+    it "should be able to add a key to the new app's default version in the default environment" do
         page.open("/")
         # Click on default env
         page.wait_for_element('//span[@class="envName" and text()="default"]')
         page.click('//span[@class="envName" and text()="default"]')
         # Wait for apps to load
         page.wait_for_element('//li[@id="default"]//ul[@class="application_list"]//form[@class="new_app_form"]//input[@id="new_app_name"]')
-        # Click on cage app
-        page.click('//span[@class="appName" and text()="cage"]')
+        # Click on cage app default version 
+        page.click('//li[@id="defaultcagedefault"]/img[2]')
         # Wait for key/value table to load
         page.wait_for_element('//table[@id="key_value_table"]')
         # Click in add key box
@@ -91,8 +91,8 @@ describe "ESCAPE Management Interface" do
         page.click('//span[@class="envName" and text()="default"]')
         # Wait for apps to load
         page.wait_for_element('//li[@id="default"]//ul[@class="application_list"]//form[@class="new_app_form"]//input[@id="new_app_name"]')
-        # Click on cage app
-        page.click('//span[@class="appName" and text()="cage"]')
+        # Click on cage app default version 
+        page.click('//li[@id="defaultcagedefault"]/img[2]')
         # Wait for key/value table to load
         page.wait_for_element('//table[@id="key_value_table"]')
         # Click in add key box
@@ -110,8 +110,8 @@ describe "ESCAPE Management Interface" do
         page.click('//span[@class="envName" and text()="zoo"]')
         # Wait for apps to load
         page.wait_for_element('//li[@id="zoo"]//ul[@class="application_list"]//form[@class="new_app_form"]//input[@id="new_app_name"]')
-        # Click on cage app
-        page.click('//li[@id="zoo"]//span[@class="appName" and text()="cage"]')
+        # Click on cage app default version 
+        page.click('//li[@id="zoocagedefault"]/img[2]')
         # Wait for key/value table to load
         page.wait_for_element('//table[@id="key_value_table"]')
         # Check that we see the default value in default
@@ -127,8 +127,8 @@ describe "ESCAPE Management Interface" do
         page.click('//span[@class="envName" and text()="zoo"]')
         # Wait for apps to load
         page.wait_for_element('//li[@id="zoo"]//ul[@class="application_list"]//form[@class="new_app_form"]//input[@id="new_app_name"]')
-        # Click on cage app in zoo
-        page.click('//li[@id="zoo"]//span[@class="appName" and text()="cage"]')
+        # Click on cage app default version 
+        page.click('//li[@id="zoocagedefault"]/img[2]')
         # Wait for key/value table to load
         page.wait_for_element('//table[@id="key_value_table"]//tbody//tr//td[@id="default.key"]')
         # Add default value to the key
@@ -144,9 +144,10 @@ describe "ESCAPE Management Interface" do
         # Wait for apps to load
         page.wait_for_element('//li[@id="default"]//ul[@class="application_list"]//form[@class="new_app_form"]//input[@id="new_app_name"]')
         # Click on cage app in default
-        page.click('//li[@id="default"]//span[@class="appName" and text()="cage"]')
+        page.click('//li[@id="defaultcagedefault"]/img[2]')
         # Check that we see the default value in default
         page.wait_for_element('//table[@id="key_value_table"]//tbody//tr//td[@id="default.key"]')
         page.get_text('//table[@id="key_value_table"]//tbody//tr//td[@id="default.key"]').should == "rubber"
     end
+    
 end
