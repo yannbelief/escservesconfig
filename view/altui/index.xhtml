@@ -1,0 +1,162 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>Escape Serves Configuration</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+		<link href="altui/css/escape.css" rel="stylesheet" type="text/css">
+		<link href="altui/css/thickbox.css" rel="stylesheet" type="text/css" />
+	
+		<script type="text/javascript" src="/js/jquery.js"></script>
+		<script type="text/javascript" src="/js/jquery.ui.all.js"></script>
+		<script type="text/javascript" src="/js/jquery.uitableedit.altui.js"></script>
+		<script type="text/javascript" src="altui/js/escape.js"></script>
+		<script type="text/javascript" src="altui/js/thickbox.js"></script>
+
+		<link rel="icon" href="altui/images/escapelogo.png" type="image/x-icon">
+	</head>
+
+
+
+	<body>
+		<noscript>
+			<div style="width:300px;height:300ps;background:#fff;color:#ddd;border:1px solid black;">Escape requires that you have javascript enabled in your browser. Check your browser settings (under preferences) to ensure that javascript is enabled.
+			</div>
+		</noscript>
+	
+		<div id="main">
+			<div id="header">
+				<div id="header_inner">
+					<div id="logo">
+						<a href="http://code.google.com/p/escservesconfig/"></a>
+					</div>
+					<form method="get" id="search_form" action="javascript:find_environments()">
+						<fieldset>
+							<input type="text" id="search_input" autocomplete="off"/>
+							<input type="submit" value="Search" class="submit"/>
+						</fieldset>
+					</form>	
+					<div id="user_message">
+						Welcome, Rolf!
+					</div>
+				</div>
+			</div>
+		
+			<div id="content">
+				<div class="search_results">
+					<div class="search_header">
+						<p>Search Results</p>
+					</div>
+					<div class="line"></div>
+					<div class="border">
+						<div class="box">
+							<div class="title">Environments</div>
+							<dl id="environments">
+								<dt id="env____template" style="display:none"><a href="javascript:void(0)">+ env +</a></dt>
+							</dl>
+							<div id="add_environment">
+								<img class="add_key" title="add new environment" style="margin:4px 90px 0 20px"/>
+								<form method="get" class="add_environment_form" action="javascript:void(0);">
+									<fieldset>
+										<input class="add_environment_text" type="text"/>
+										<input class="add_environment_submit" type="submit" value="add"/>
+									</fieldset>
+								</form>
+							</div>
+							<div class="title">Applications</div>
+							<dl>
+								<dt><a id="app-ProfilerApp" href="javascript:select_search_result('app-ProfilerApp')">ProfilerApp</a></dt>
+								<dt><a id="app-RiskProtectService" href="javascript:select_search_result('app-RiskProtectService')">RiskProtectService</a></dt>
+							</dl>
+							<div class="title"></div>
+						</div>
+					</div>
+				</div>
+					
+				<div class="selected">
+					<div id="selected_name" class="selected_name"></div>
+					<div class="line"></div>
+
+					<div id="selected_details" class="item">
+			           <div class="selected_details_content">
+			               <div class="content_wrapper">
+			        			<div class="info">
+			                       <div class="core_info">
+			                           <div class="name"></div>
+			                       </div>
+			                   </div>
+			       			<div class="property_area" id="property_area____template">
+								<div class="properties">
+									<table>
+										<tr id="property_tr____template" style="display:none">
+											<td class="keydots"><key></key></td> 
+											<td class="value"></td> 
+											<td class="delete_property" title="delete property"/>
+										</tr>
+									</table>
+									<div class="delete_selected">
+										<a href="javascript:void(0);"><img src="altui/images/blank.gif"></a>
+									</div>
+								</div>
+			                   </div>
+			               </div>
+			           </div>
+			           <div class="selected_details_bottom" display="background-color:#697F50"></div>
+			       </div>
+					
+					<div id="items">
+						<div id="item____template" class="item" style="display:none">
+				           <div class="topbot"></div>
+				           <div class="content">
+				               <div class="content_wrapper">
+				        			<div class="info">
+				                       <div class="core_info">
+				                           <div class="name"></div>
+				                           <div class="description">blah blah blah blah</div>
+				                       </div>
+				                       <div class="open_item">
+				                           <a href="javascript:void(0)"><img src="altui/images/blank.gif"></a>
+				                       </div>
+				                       <div class="close_item" style="display:none">
+				                           <a href="javascript:void(0)"><img src="altui/images/blank.gif"></a>
+				                       </div>
+				                   </div>
+				       			<div class="property_area" id="property_area____template" style="display:none">
+				       				<div class="separator"></div>
+									<div class="properties">
+										<table>
+											<tr id="property_tr____template" style="display:none">
+												<td class="keydots"><key></key></td> 
+												<td class="value"></td> 
+												<td class="delete_property" title="delete property"/>
+											</tr>
+										</table>
+										<img class="add_key" title="add new key"/>
+										<form method="get" class="add_property_form" action="javascript:void(0);">
+											<fieldset>
+												<input class="add_property_text" type="text"/>
+												<input class="add_property_submit" type="submit" value="add key"/>
+											</fieldset>
+										</form>
+										<div class="delete_item">
+											<a href="javascript:void(0);"><img src="altui/images/blank.gif"></a>
+										</div>
+									</div>
+									</div>
+								</div>
+							</div>
+							<div class="topbot"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="hiddenModalContent" style="display:none">
+			<p>Are you sure you want to delete?</p>
+			<p style="text-align:center"><input type="submit" id="Yes" value="&nbsp;&nbsp;Yes&nbsp;&nbsp;" onclick="tb_remove()" /></p>
+			<p style="text-align:center"><input type="submit" id="No" value="&nbsp;&nbsp;No&nbsp;&nbsp;" onclick="bob();tb_remove()" /></p>
+		</div>			
+			
+	</body>
+</html>

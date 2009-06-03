@@ -43,7 +43,8 @@ class EnvironmentsController < EscController
                 listEnvs
             # List all apps in specified environment
             elsif app.nil?
-                listApps
+#                listApps
+                listAppsAltUI
             # List keys and values for app in environment
             elsif key.nil?
                 listKeys
@@ -188,6 +189,23 @@ class EnvironmentsController < EscController
         response.headers["Content-Type"] = "application/json"
         return apps.sort.to_json
     end
+    
+    def listAppsAltUI
+        # List fields and all apps in specified environment
+        getEnv
+    
+        apps = Array.new
+            @myEnv.apps.each do |app|
+            apps.push(app[:name])
+        end
+    
+        ret = {"apps", apps.sort, "public_key", "temp key - seems to be problem with real key in javascript"};
+#        ret = {"apps", apps.sort, "public_key", @myEnv.public_key};
+        response.headers["Content-Type"] = "application/json"
+        return ret.to_json
+    end
+      
+    
     
     def listKeys
         # List keys and values for app in environment
