@@ -30,12 +30,12 @@
 					<div id="logo">
 						<a href="http://code.google.com/p/escservesconfig/"></a>
 					</div>
-					<form method="get" id="search_form" action="javascript:find_environments()">
+					<form method="get" id="search_form" action="javascript:void(0)">
 						<fieldset>
 							<input type="text" id="search_input" autocomplete="off"/>
 							<input type="submit" value="Search" class="submit"/>
 						</fieldset>
-					</form>	
+					</form>
 					<div id="user_message">
 						Welcome, Rolf!
 					</div>
@@ -46,6 +46,7 @@
 				<div class="search_results">
 					<div class="search_header">
 						<p>Search Results</p>
+						<a href="?text=bob">(link to)</a>
 					</div>
 					<div class="line"></div>
 					<div class="border">
@@ -84,20 +85,20 @@
 			                       <div class="core_info">
 			                           <div class="name"></div>
 			                       </div>
-			                   </div>
-			       			<div class="property_area">
-								<div class="properties">
-									<table>
-										<tr>
-											<td class="keydots"><key>Owner</key></td> 
-											<td class="value"></td> 
-											<td class="delete_property" title="delete property"/>
-										</tr>
-									</table>
-									<div class="delete_selected">
-										<a href="javascript:void(0);"><img src="altui/images/blank.gif"></a>
-									</div>
 								</div>
+				       			<div class="property_area">
+									<div class="properties">
+										<table>
+											<tr>
+												<td class="keydots"><key>Owner</key></td> 
+												<td class="value"></td> 
+												<td class="delete_property" title="delete property"/>
+											</tr>
+										</table>
+										<div class="delete_selected">
+											<a href="javascript:void(0);"><img src="altui/images/blank.gif"></a>
+										</div>
+									</div>
 			                   </div>
 			               </div>
 			           </div>
