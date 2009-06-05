@@ -1,54 +1,5 @@
-jQuery.fn.outerHTML = function() {    // returns html including the element itself, not just the innerhtml that JQuery's html() returns
-    return $('<div>').append( this.eq(0).clone() ).html();
-};
-
-var currentlySelected;
-
-function select_search_result(newlySelected) {
-    $("#env_" + currentlySelected).children().css('fontWeight', 'normal').css('color', '#11366F');
-    currentlySelected = newlySelected;
-    $("#env_" + newlySelected).children().css('fontWeight', 'bold').css('color', 'green');
-	load_environment(newlySelected);
-}
-
-function clear_search() {
-    $(currentlySelected).css('fontWeight', 'normal').css('color', '#11366F');
-    currentlySelected = null;
-	$('#selected_name').empty();
-    $('#items').html($('#item____template'));
-
-	var environments = $('#environments');
-    var envTemplate = $('#env____template');
-	environments.empty();
-	environments.append(envTemplate);
-}
-
-function find_environments() {
-    var text = $('#search_input').val();
-	find_environments_json('/altui/search?text=' + text);
-}  
-
-function find_all_environments() {
-	find_environments_json('/environments');
-}  
-
-function find_environments_json(url) {
-	clear_search();
-	$.getJSON(url,
-        function(data) {
-            $.each(data, function(i, envName) {
-				add_environment(envName);
-            });
-            if (data.length == 1) { select_search_result(data[0]); }
-        }
-    );
-}
-
-function add_environment(envName) {
-	var env = $("#env____template").clone().attr("id", "env_" + envName).show();
-	env.find("a").text(envName);
-	$('#environments').append(env);	
-}
+var itemTemplate;
+var propertyTemplate;
 
 
 function load_environment(envName) { 
@@ -58,20 +9,25 @@ function load_environment(envName) {
             var items = $.map(data['apps'], function(appName, i) {
 				return load_app(envName, appName);
             });
-            set_environment(envName, items);
+            set_selected(envName, items);
         }
     );
 }
 
-function set_environment(envName, items) {
+function set_selected(envName, items) {
 	$('#selected_name').html(envName);
-	var itemTemplate = $('#item____template');
+	$('#selected_details').show();
     var itemsHTML = $('#items');
 	itemsHTML.empty();
-	items.push(itemTemplate);
 	$.each(items, function(i, item) {
 		itemsHTML.append(item);
 	});
+}
+
+function clear_selected() {
+	$('#selected_name').empty();
+ 	$('#selected_details').hide();
+	$('#items').empty();
 }
 
 function load_app(envName, appName) {
@@ -81,17 +37,16 @@ function load_app(envName, appName) {
 }
 
 function create_app(appName) {
-	var app = $("#item____template").clone().attr("id", "item_" + appName).show();
+	var app = itemTemplate.clone().attr("id", "item_" + appName).show();
 	app.find(".name").text(appName);
 	app.find(".property_area").attr("id", "property_area_" + appName);
+	app.find("table").attr("id", "table_" + appName);
 	return app;
 }            
 
 function refresh_properties(envName, appName, item) {
 	var propertiesTable = item.find(".properties table");
-	var propertyTemplate = item.find("#property_tr____template");
 	propertiesTable.empty();
-	propertiesTable.append(propertyTemplate);
 	create_properties(envName, appName, item);
 }
 
@@ -100,6 +55,7 @@ function create_properties(envName, appName, item) {
         type: "GET",
         url: '/environments/' + envName + '/' + appName,
         success: function(data, textStatus) {
+			if (data.length == 0) return;
 		    $.each(data.split('\n'), function(i, prop) {
 		        var key = prop.slice(0, prop.indexOf("="));
 		        var value = prop.slice(prop.indexOf("=") + 1);
@@ -111,7 +67,7 @@ function create_properties(envName, appName, item) {
 }
 
 function create_property(item, key, value) {
-	var property = $("#property_tr____template").clone().attr("id", "property_tr_" + key).show();
+	var property = propertyTemplate.clone().attr("id", "property_tr_" + key).show();
 	property.find("key").text(key);
 	property.find(".value").text(value);
 	item.find(".properties table").append(property);
@@ -143,13 +99,10 @@ function notDefined(value) {
 
 
 $(document).ready(function() {
-    find_all_environments();
-
-	$('#environments > dt > a').live("click", function() {
-		select_search_result($(this).text());
-	});
-		
 	
+	itemTemplate = $("#item____template");
+	propertyTemplate = $("#property_tr____template");
+		
 	$('.delete_selected').live("click", function() {
 		var envName = env_name();
 		if (!confirm('Are you sure you want to delete ' + envName + '?')) { return; }
@@ -174,7 +127,7 @@ $(document).ready(function() {
 	    $(this).siblings('.close_item').show();
 		property_area(this).show('normal');
 
-	    $.uiTableEdit($('#table-' + appName), {
+	    $.uiTableEdit($('#table_' + appName), {
 	        find: '.value', 
 	        editDone: function(newText, oldText, event, td) {
 	            if (newText == oldText) return;
@@ -260,31 +213,11 @@ $(document).ready(function() {
 		    url: "/environments/" + envName + "/" + appName + "/" + key,
 		    data: {},
 		    success: function(data, textStatus) {
-				$(item).find('#property_tr_' + key).remove();
+				refresh_properties(envName, appName, item)
 		    },
 		    error: function(XMLHttpRequest, textStatus, errorThrown) {
 		        alert("Error deleting '" + key +"': " + XMLHttpRequest.responseText);
 		    },
 		})
-	});
-	
-
-	$('.add_environment_submit').live("click", function() {
-		var textField = $(this).siblings(".add_environment_text");
-		var envName = textField.val();
-		textField.val("");
-		if (notDefined(envName)) { alert("Unable to add blank environment"); return; }
-
-	    $.ajax({
-	        type: "PUT",
-	        url: "/environments/" + envName,
-	        data: "",
-	        success: function(XMLHttpRequest, textStatus) {
-				add_environment(envName);
-	        },
-		    error: function(XMLHttpRequest, textStatus, errorThrown) {
-		        alert("Error adding environment '" + envName +"'\n" + XMLHttpRequest.responseText);
-		    },
-	    });
 	});
 });
