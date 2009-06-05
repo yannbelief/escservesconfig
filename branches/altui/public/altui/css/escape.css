@@ -118,11 +118,21 @@ form fieldset {
 }
 
 .search_header p {
+	float:left;
     color:#FFFFFF;
     font-size:14px;
     font-weight:bold;
-    margin-top:8px;
+    margin:8px 0 0 50px;
 }
+
+.search_header a {
+	float:right;
+    color:#FFFFFF;
+    font-size:9px;
+    font-weight:bold;
+    margin:8px 50px 0 0;
+}
+
 
 .search_results .line {
 	float:left;
@@ -218,7 +228,7 @@ form fieldset {
 
 
 /* Items */
-.item {
+.item, #selected_details {
     float:left;
     margin:0 0 15px;
     width:685px;
@@ -238,23 +248,23 @@ form fieldset {
     text-align:left;
 }
 
-.item .content_wrapper {
+.item .content_wrapper, #selected_details .content_wrapper {
     float:left;
     padding:10px 11px;
 }
 
-.item .info {
+.item .info, #selected_details .info {
     float:left;
     height:30px;
     width:670px;
 }
 
-.item .core_info { 
+.item .core_info, #selected_details .core_info { 
 	float:left;
 	width:441px;
 }
 
-.core_info .name { 
+.core_info .name, #selected_details .name { 
 	font-size:14px;
 	color:#4F4F4F;
 	font-weight:bold;

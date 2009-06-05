@@ -4,7 +4,16 @@ jQuery.fn.outerHTML = function() {    // returns html including the element itse
 
 var currentlySelected;
 var envTemplate;
-var searchText;
+
+
+function preload_sidebar() {
+	var url = window.location.href;
+	if (url.match("text=")) {
+		var searchText = url.substr(url.indexOf("text=") + 5);
+		find_environments(searchText);
+	}
+	else { find_all_environments(); }
+}
 
 function clear_search() {
 	clear_selected();
@@ -12,9 +21,10 @@ function clear_search() {
 	$('#environments').empty();
 }
 
-function find_environments() {
-    searchText = $('#search_input').val();
-	find_environments_json('/altui/search?text=' + searchText);
+function find_environments(searchText) {
+//    $('#search_input').val(searchText);
+	$('.search_header a').attr('href', '?text=' + searchText)
+	find_environments_json('/altui/search?text=' + searchText);	
 }
 
 function find_all_environments() {
@@ -53,7 +63,13 @@ function select_environment(newlySelected) {
 $(document).ready(function() {
 	
 	envTemplate = $('#env____template');	
-    find_all_environments();
+
+	preload_sidebar();    
+
+	$('#search_form').live("submit", function() {
+	    var searchText = $('#search_input').val();
+		find_environments(searchText);
+	});
 
 	$('#environments > dt > a').live("click", function() {
 		select_environment($(this).text());
