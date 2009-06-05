@@ -10,8 +10,8 @@
 		<script type="text/javascript" src="/js/jquery.js"></script>
 		<script type="text/javascript" src="/js/jquery.ui.all.js"></script>
 		<script type="text/javascript" src="/js/jquery.uitableedit.altui.js"></script>
-		<script type="text/javascript" src="altui/js/escape.js"></script>
-		<script type="text/javascript" src="altui/js/thickbox.js"></script>
+		<script type="text/javascript" src="altui/js/selected.js"></script>
+		<script type="text/javascript" src="altui/js/sidebar.js"></script>
 
 		<link rel="icon" href="altui/images/escapelogo.png" type="image/x-icon">
 	</head>
@@ -77,7 +77,7 @@
 					<div id="selected_name" class="selected_name"></div>
 					<div class="line"></div>
 
-					<div id="selected_details" class="item">
+					<div id="selected_details" class="item" style="display:none">
 			           <div class="selected_details_content">
 			               <div class="content_wrapper">
 			        			<div class="info">
@@ -85,11 +85,11 @@
 			                           <div class="name"></div>
 			                       </div>
 			                   </div>
-			       			<div class="property_area" id="property_area____template">
+			       			<div class="property_area">
 								<div class="properties">
 									<table>
-										<tr id="property_tr____template" style="display:none">
-											<td class="keydots"><key></key></td> 
+										<tr>
+											<td class="keydots"><key>Owner</key></td> 
 											<td class="value"></td> 
 											<td class="delete_property" title="delete property"/>
 										</tr>
@@ -124,7 +124,7 @@
 				       			<div class="property_area" id="property_area____template" style="display:none">
 				       				<div class="separator"></div>
 									<div class="properties">
-										<table>
+										<table id="table____template">
 											<tr id="property_tr____template" style="display:none">
 												<td class="keydots"><key></key></td> 
 												<td class="value"></td> 
@@ -151,12 +151,5 @@
 				</div>
 			</div>
 		</div>
-
-		<div id="hiddenModalContent" style="display:none">
-			<p>Are you sure you want to delete?</p>
-			<p style="text-align:center"><input type="submit" id="Yes" value="&nbsp;&nbsp;Yes&nbsp;&nbsp;" onclick="tb_remove()" /></p>
-			<p style="text-align:center"><input type="submit" id="No" value="&nbsp;&nbsp;No&nbsp;&nbsp;" onclick="bob();tb_remove()" /></p>
-		</div>			
-			
 	</body>
 </html>
