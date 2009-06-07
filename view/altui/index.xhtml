@@ -46,14 +46,14 @@
 				<div class="search_results">
 					<div class="search_header">
 						<p>Search Results</p>
-						<a href="?text=bob">(link to)</a>
+						<a href="">(link to)</a>
 					</div>
 					<div class="line"></div>
 					<div class="border">
 						<div class="box">
 							<div class="title">Environments</div>
 							<dl id="environments">
-								<dt id="env____template" style="display:none"><a href="javascript:void(0)">+ env +</a></dt>
+								<dt id="env____template" style="display:none"><a href="javascript:void(0)"></a></dt>
 							</dl>
 							<div id="add_environment">
 								<img class="add_key" title="add new environment" style="margin:4px 90px 0 20px"/>
@@ -65,11 +65,9 @@
 								</form>
 							</div>
 							<div class="title">Applications</div>
-							<dl>
-								<dt><a id="app-ProfilerApp" href="javascript:select_search_result('app-ProfilerApp')">ProfilerApp</a></dt>
-								<dt><a id="app-RiskProtectService" href="javascript:select_search_result('app-RiskProtectService')">RiskProtectService</a></dt>
+							<dl id="applications">
+								<dt id="app____template" style="display:none"><a href="javascript:void(0)"></a></dt>
 							</dl>
-							<div class="title"></div>
 						</div>
 					</div>
 				</div>
@@ -78,77 +76,68 @@
 					<div id="selected_name" class="selected_name"></div>
 					<div class="line"></div>
 
-					<div id="selected_details" class="item" style="display:none">
-			           <div class="selected_details_content">
-			               <div class="content_wrapper">
-			        			<div class="info">
-			                       <div class="core_info">
-			                           <div class="name"></div>
-			                       </div>
-								</div>
-				       			<div class="property_area">
-									<div class="properties">
-										<table>
-											<tr>
-												<td class="keydots"><key>Owner</key></td> 
-												<td class="value"></td> 
-												<td class="delete_property" title="delete property"/>
-											</tr>
-										</table>
-										<div class="delete_selected">
-											<a href="javascript:void(0);"><img src="altui/images/blank.gif"></a>
-										</div>
-									</div>
-			                   </div>
-			               </div>
-			           </div>
-			           <div class="selected_details_bottom" display="background-color:#697F50"></div>
-			       </div>
-					
-					<div id="items">
-						<div id="item____template" class="item" style="display:none">
-				           <div class="topbot"></div>
-				           <div class="content">
-				               <div class="content_wrapper">
-				        			<div class="info">
-				                       <div class="core_info">
-				                           <div class="name"></div>
-				                           <div class="description">blah blah blah blah</div>
-				                       </div>
-				                       <div class="open_item">
-				                           <a href="javascript:void(0)"><img src="altui/images/blank.gif"></a>
-				                       </div>
-				                       <div class="close_item" style="display:none">
-				                           <a href="javascript:void(0)"><img src="altui/images/blank.gif"></a>
-				                       </div>
-				                   </div>
-				       			<div class="property_area" id="property_area____template" style="display:none">
-				       				<div class="separator"></div>
-									<div class="properties">
-										<table id="table____template">
-											<tr id="property_tr____template" style="display:none">
-												<td class="keydots"><key></key></td> 
-												<td class="value"></td> 
-												<td class="delete_property" title="delete property"/>
-											</tr>
-										</table>
-										<img class="add_key" title="add new key"/>
-										<form method="get" class="add_property_form" action="javascript:void(0);">
-											<fieldset>
-												<input class="add_property_text" type="text"/>
-												<input class="add_property_submit" type="submit" value="add key"/>
-											</fieldset>
-										</form>
-										<div class="delete_item">
-											<a href="javascript:void(0);"><img src="altui/images/blank.gif"></a>
-										</div>
-									</div>
-									</div>
-								</div>
+					<div id="selected_details" style="display:none">
+						<div id="selected_properties">
+							<table>
+								<tr id="selected_property_tr____template" style="display:none">
+									<td class="keydots"><key></key></td> 
+									<td class="value"></td> 
+								</tr>
+							</table>
+							<div id="selected_buttons">
+								<img id="clone_selected" title="clone environment"/>
+								<form method="get" class="clone_form" action="javascript:void(0);" style="display:none">
+									<fieldset>
+										<input class="clone_text" type="text"/>
+										<input class="clone_submit" type="submit" value="new env"/>
+									</fieldset>
+								</form>
+								<img id="delete_selected" title="delete environment"/>
 							</div>
-							<div class="topbot"></div>
 						</div>
-					</div>
+						<div class="selected_details_bottom"></div>
+			        
+						<div id="items">
+							<div id="item____template" class="item" style="display:none">
+					           <div class="topbot"></div>
+					           <div class="content">
+					               <div class="content_wrapper">
+					        			<div class="info">
+											<div class="core_info">
+												<div class="name"></div>
+												<div class="description">blah blah blah blah</div>
+											</div>
+											<img class="open_item"/>
+											<img class="close_item"/>
+										</div>
+										<div class="property_area" id="property_area____template" style="display:none">
+											<div class="separator"></div>
+											<div class="properties">
+												<table id="table____template">
+													<tr id="property_tr____template" style="display:none">
+														<td class="keydots"><key></key></td> 
+														<td class="value"></td> 
+														<td class="delete_property" title="delete property"/>
+													</tr>
+												</table>
+												<img class="add_key" title="add new key"/>
+												<form method="get" class="add_property_form" action="javascript:void(0);">
+													<fieldset>
+														<input class="add_property_text" type="text"/>
+														<input class="add_property_submit" type="submit" value="add key"/>
+													</fieldset>
+												</form>
+												<img class="delete_item" title="delete this"/>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="topbot"></div>
+							</div>
+
+						</div>
+						<div class="selected_details_bottom"></div>
+			       </div>
 				</div>
 			</div>
 		</div>

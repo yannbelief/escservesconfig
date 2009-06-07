@@ -24,7 +24,7 @@ var EscSidebar = function() {
             var url = "/environments/" + envName;
             $.getJSON(url, function(appData) {
                 var appList = '<ul class="application_list" style="display: none;"';
-                $.each(appData, function(appId, thisApp) {
+                $.each(appData['apps'], function(appId, thisApp) {
                     appList += ("<li id='" + thisApp + "' class='application'>");
                     appList += ("<img class='appdelete' src='/images/delete.png' alt='Delete " + thisApp +" application'/>");
                     appList += ("<img class='appedit' src='/images/edit.png' alt='Edit " + thisApp +" application'/>");

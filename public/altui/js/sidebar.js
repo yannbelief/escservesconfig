@@ -3,42 +3,43 @@ jQuery.fn.outerHTML = function() {    // returns html including the element itse
 };
 
 var currentlySelected;
+var currentSearchText = "";
 var envTemplate;
+var appTemplate;
 
 
 function preload_sidebar() {
 	var url = window.location.href;
 	if (url.match("text=")) {
-		var searchText = url.substr(url.indexOf("text=") + 5);
-		find_environments(searchText);
+		currentSearchText = url.substr(url.indexOf("text=") + 5);
+		search_for(currentSearchText);
 	}
-	else { find_all_environments(); }
+	else { search_for(""); }
 }
 
-function clear_search() {
-	clear_selected();
-    currentlySelected = null;
-	$('#environments').empty();
+function search_again() {
+	search_for(currentSearchText);
 }
 
-function find_environments(searchText) {
-//    $('#search_input').val(searchText);
-	$('.search_header a').attr('href', '?text=' + searchText)
-	find_environments_json('/altui/search?text=' + searchText);	
+function search_for(searchText) {
+    $('#search_input').val(searchText);
+	var href = 'altui';
+	if (searchText != "") { href += '?text='+ searchText }
+	$('.search_header a').attr('href', href);
+	search_for_json('/altui/search/' + searchText);	
 }
 
-function find_all_environments() {
-	find_environments_json('/environments');
-}  
-
-function find_environments_json(url) {
+function search_for_json(url) {
 	clear_search();
 	$.getJSON(url,
         function(data) {
-            $.each(data, function(i, envName) {
+            $.each(data["envs"], function(i, envName) {
 				add_environment(envName);
             });
-            if (data.length == 1) { select_environment(data[0]); }
+            $.each(data["apps"], function(i, appName) {
+				add_application(appName);
+            });
+            if (data["envs"].length == 1) { select_environment(data["envs"][0]); }
         }
     );
 }
@@ -47,6 +48,19 @@ function add_environment(envName) {
 	var env = envTemplate.clone().attr("id", "env_" + envName).show();
 	env.find("a").text(envName);
 	$('#environments').append(env);
+}
+
+function add_application(appName) {
+	var app = appTemplate.clone().attr("id", "app_" + appName).show();
+	app.find("a").text(appName);
+	$('#applications').append(app);
+}
+
+function clear_search() {
+	clear_selected();
+    currentlySelected = null;
+	$('#environments').empty();
+	$('#applications').empty();
 }
 
 function select_environment(newlySelected) {
@@ -62,13 +76,14 @@ function select_environment(newlySelected) {
 
 $(document).ready(function() {
 	
-	envTemplate = $('#env____template');	
+	envTemplate = $('#env____template');
+	appTemplate = $('#app____template');
 
 	preload_sidebar();    
 
 	$('#search_form').live("submit", function() {
-	    var searchText = $('#search_input').val();
-		find_environments(searchText);
+	    currentSearchText = $.trim($('#search_input').val());
+		search_for(currentSearchText);
 	});
 
 	$('#environments > dt > a').live("click", function() {

@@ -9,13 +9,19 @@ function load_environment(envName) {
             var items = $.map(data['apps'], function(appName, i) {
 				return load_app(envName, appName);
             });
-            set_selected(envName, items);
+            set_as_selected(envName, data['owner'], data['public_key'], items);
         }
     );
 }
 
-function set_selected(envName, items) {
+function set_as_selected(envName, owner, public_key, items) {
 	$('#selected_name').html(envName);
+	var propertiesTable = $('#selected_properties table');
+	propertiesTable.empty();
+	propertiesTable.append(create_selected_property('Owner', owner));
+	propertiesTable.append(create_selected_property('Public Key', public_key));
+	$('#clone_selected').attr("title", "clone " + envName);
+	$('#delete_selected').attr("title", "delete " + envName);
 	$('#selected_details').show();
     var itemsHTML = $('#items');
 	itemsHTML.empty();
@@ -41,6 +47,7 @@ function create_app(appName) {
 	app.find(".name").text(appName);
 	app.find(".property_area").attr("id", "property_area_" + appName);
 	app.find("table").attr("id", "table_" + appName);
+	app.find(".delete_item").attr("title", "delete " + appName);
 	return app;
 }            
 
@@ -56,28 +63,36 @@ function create_properties(envName, appName, item) {
         url: '/environments/' + envName + '/' + appName,
         success: function(data, textStatus) {
 			if (data.length == 0) return;
+			var table = item.find(".properties table");
 		    $.each(data.split('\n'), function(i, prop) {
 		        var key = prop.slice(0, prop.indexOf("="));
 		        var value = prop.slice(prop.indexOf("=") + 1);
-		    	create_property(item, key, value);
+		    	var property = create_property(key, value);
+				table.append(property);
 			}); 
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) { alert('create_properties failed for: ' + envName + '-->' + appName + "\n" + XMLHttpRequest.responseText) }
     });
 }
 
-function create_property(item, key, value) {
-	var property = propertyTemplate.clone().attr("id", "property_tr_" + key).show();
+function create_property(key, value) {
+	var property = propertyTemplate.clone().removeAttr("id").show();
 	property.find("key").text(key);
 	property.find(".value").text(value);
-	item.find(".properties table").append(property);
+	return property;
 }
 
+function create_selected_property(key, value) {
+	var property = selectedPropertyTemplate.clone().removeAttr("id").show();
+	property.find("key").text(key);
+	property.find(".value").text(value);
+	return property;
+}
 
 
 //----------------------------------------------
 
-function env_name() {
+function selected_name() {
 	return $('#selected_name').text();
 }
 
@@ -101,27 +116,54 @@ function notDefined(value) {
 $(document).ready(function() {
 	
 	itemTemplate = $("#item____template");
+	selectedPropertyTemplate = $("#selected_property_tr____template");
 	propertyTemplate = $("#property_tr____template");
 		
-	$('.delete_selected').live("click", function() {
-		var envName = env_name();
+	$('#delete_selected').live("click", function() {
+		var envName = selected_name();
 		if (!confirm('Are you sure you want to delete ' + envName + '?')) { return; }
 		$.ajax({
 	        type: "DELETE",
 	        url: "/environments/" + envName,
 	        data: {},
 	        success: function(data, textStatus) {
-			    find_all_environments();
+			    search_again();
 	        },
 	        error: function(XMLHttpRequest, textStatus, errorThrown) {
 	            alert("Error deleting '" + envName + "'\n" + XMLHttpRequest.responseText);
 	        },
 	    })
 	});
+
+
+	$('#clone_selected').live("click", function() {
+		$(this).siblings("form").toggle();
+	});
+
+
+	$('.clone_submit').live("click", function() {
+		var envName = selected_name();
+		if (!confirm('Are you sure you want to clone ' + envName + '?')) { return; }
+		var newEnvName = $.trim($(this).siblings(".clone_text").val());
+		$(this).siblings(".clone_text").val("");
+		$(this).parent().hide();
+		$.ajax({
+			beforeSend: function(request) {request.setRequestHeader("Content-Location", envName)},
+            type: "POST",
+            url: "/environments/" + newEnvName,
+            data: {},
+            success: function(data, textStatus) {
+			    search_for(newEnvName);
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert("Error cloning " + envName + " to " + newEnvName + ": " + XMLHttpRequest.responseText);
+            },
+	    })
+	});
 	
 	
 	$('.open_item').live("click", function() {
-		var envName = env_name();
+		var envName = selected_name();
 		var appName = app_name(this);
 	    $(this).hide();
 	    $(this).siblings('.close_item').show();
@@ -155,7 +197,7 @@ $(document).ready(function() {
 
 	
 	$('.delete_item').live("click", function() {
-		var envName = env_name();
+		var envName = selected_name();
 		var appName = app_name(this);
 		var item = jItem(this);
 		if (!confirm('Are you sure you want to delete ' + appName + '?')) { return; }
@@ -179,14 +221,14 @@ $(document).ready(function() {
 
 
 	$('.add_property_submit').live("click", function() {
-		var envName = env_name();
+		var envName = selected_name();
 		var appName = app_name(this);
 		var keyField = $(this).siblings(".add_property_text");
-		var key = keyField.val();
+		var key = $.trim(keyField.val());
+		if (notDefined(envName) || notDefined(appName) || notDefined(key)) { alert("Unable to add key '" + key + "' to '" + envName + "':'" + appName + "'"); return; }
 		keyField.val("");
 		var value = "";
 		var item = jItem(this);
-		if (notDefined(envName) || notDefined(appName) || notDefined(key)) { alert("Unable to add key '" + key + "' to '" + envName + "':'" + appName + "'"); return; }
 
 	    $.ajax({
 	        type: "PUT",
@@ -203,7 +245,7 @@ $(document).ready(function() {
 	
 	
 	$('.delete_property').live("click", function() {
-		var envName = env_name();
+		var envName = selected_name();
 		var appName = app_name(this);
 		var key = $(this).siblings(".keydots").text();
 		var item = jItem(this);
