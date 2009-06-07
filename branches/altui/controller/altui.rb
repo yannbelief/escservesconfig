@@ -19,13 +19,18 @@ class AltUIController < EscController
     def index
     end    
     
-    def search()
-        text = request['text'];
+    def search(text = "")
         envs = Array.new
         Environment.where('name like ?', '%' + text + '%').each do |env|
             envs.push(env[:name])
         end
+        apps = Array.new
+        App.where('name like ?', '%' + text + '%').each do |app|
+            apps.push(app[:name])
+        end
+        
+        ret = {"apps", apps.sort, "envs", envs.sort};
         response.headers["Content-Type"] = "application/json"
-        return envs.sort.to_json
+        return ret.to_json
     end
 end

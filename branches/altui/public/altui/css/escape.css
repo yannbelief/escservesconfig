@@ -151,6 +151,7 @@ form fieldset {
 .search_results .box {
 	float:left;
     margin:12px 6px 10px 6px;
+	padding:0 0 12px 0;
 	background-color: #F4F4F4;
     width:238px;
 }
@@ -163,7 +164,7 @@ form fieldset {
     color:#0051AE;
 }
 
-.search_results dl, .search_results #add_environment {
+.search_results dl, #add_environment, #add_application {
     float:left;
 	width: 235px;
 }
@@ -210,34 +211,80 @@ form fieldset {
 	height:3px;
 	clear:both;
 	width:685px;
-	background-color:#A8A8A8;   /* 7FA068; */
+	background-color:#A8A8A8;
+}
+
+#selected_details {
+    background:transparent url(../images/selected_side.gif) repeat-y scroll left top;
+    float:left;
+    width:685px;
+    z-index:0;
+}
+
+#selected_properties {
+	float:left;
+    width:663px;
+	margin:10px 0 10px 0;
+    padding:10px 11px;
+	font-size:11px;
+	color:#3E3E3E;
+    position: relative;
 }
 
 .selected_details_bottom {
-    height:7px;
+    height:4px;
 	width:685px;
     clear:both;
-	background-color:#A8A8A8;   /* 7FA068; */
+	background-color:#A8A8A8;   /* A8A8A8 8DB578 7FA068 697F50 */
 }
 
-.selected_details_content {
-    background:transparent url(../images/selected_side.gif) repeat-y scroll left top;
-    float:left;
-    text-align:left;
+#selected_buttons {
+	float:right;
 }
+
+#clone_selected {
+	float:left;
+	background: url(../images/clone_selected_grey.png) no-repeat;
+    height:29px;
+    width:34px;
+	cursor:pointer;
+}
+
+#clone_selected:hover {
+	background: url(../images/clone_selected_color.png) no-repeat;
+}
+
+#delete_selected, .delete_item {
+	float:right;
+	background: url(../images/delete_item_grey.png) no-repeat;
+    height:29px;
+    width:33px;
+	cursor:pointer;
+}
+
+#delete_selected:hover, .delete_item:hover {
+	background: url(../images/delete_item_color.png) no-repeat;
+}
+
+
 
 
 /* Items */
-.item, #selected_details {
+#items {
+	margin:10px 0 0 0;
+	padding:10px 11px;
+}
+
+.item {
     float:left;
     margin:0 0 15px;
-    width:685px;
+    width:665px;
     z-index:0;
 }
 
 .item .topbot {
     height:7px;
-	width:685px;
+	width:665px;
     clear:both;
 	background-color:#EBEBEB;
 }
@@ -248,23 +295,23 @@ form fieldset {
     text-align:left;
 }
 
-.item .content_wrapper, #selected_details .content_wrapper {
+.item .content_wrapper {
     float:left;
     padding:10px 11px;
 }
 
-.item .info, #selected_details .info {
+.item .info {
     float:left;
     height:30px;
-    width:670px;
+    width:650px;
 }
 
-.item .core_info, #selected_details .core_info { 
+.item .core_info { 
 	float:left;
 	width:441px;
 }
 
-.core_info .name, #selected_details .name { 
+.core_info .name { 
 	font-size:14px;
 	color:#4F4F4F;
 	font-weight:bold;
@@ -281,7 +328,7 @@ form fieldset {
 	float:left;
 	clear:both;
 	height:1px;
-	width:593px;
+	width:573px;
 	border-top:1px solid #C7C7C7;
 	margin:10px 0 10px 0;
 }
@@ -293,59 +340,31 @@ form fieldset {
 	width:100%;
 }
 
-.delete_item, .delete_selected {
-    border:0 none;
-    height:28px;
-    margin-right:3px;
-    padding:0;
-    width:29px;
-	position: absolute;
-	bottom: 0;
-	right: 0;
+.close_item {
+	float:right;
+	background: url(../images/close_item_grey.png) no-repeat;
+    height:29px;
+    width:33px;
+	cursor:pointer;
+	display:none;
 }
 
-.close_item {
-    border:0 none;
-    float:right;
-    height:28px;
-    margin-right:3px;
-    padding:0;
-    width:29px;
+.close_item:hover {
+	background: url(../images/close_item_color.png) no-repeat;
 }
 
 .open_item {
-    border:0 none;
-    float:right;
-    height:28px;
-    margin-right:3px;
-    padding:0;
-    width:29px;
+	float:right;
+	background: url(../images/open_item_grey.png) no-repeat;
+    height:29px;
+    width:33px;
+	cursor:pointer;
 }
 
-.close_item a:hover, .open_item a:hover, .delete_item a:hover, .delete_selected a:hover {
-    background-position:0px -28px;
+.open_item:hover {
+	background: url(../images/open_item_color.png) no-repeat;
 }
 
-.close_item a {
-	display:block;
-	background: url(../images/close_item.png) no-repeat 0px -56px;
-}
-
-.open_item a {
-	display:block;
-	background: url(../images/open_item.png) no-repeat 0px -56px;
-}
-
-.delete_item a, .delete_selected a {
-	display:block;
-	background: url(../images/delete_item.png) no-repeat 0px -56px;
-}
-
-.close_item img, .open_item img, .delete_item img, .delete_selected img {
-	border:0;
-	height:29px;
-	width:29px;
-}
 
 
 
@@ -358,15 +377,15 @@ form fieldset {
     position: relative;
 }
 
-.properties table {
+.properties table, #selected_properties table {
 	float:left;
 	margin:0px;
 	padding:0px;
-	width:600px;
+	width:580px;
 	list-style-type:none;
 }
 
-.properties .keydots {
+.keydots {
     width:150px;
 	background:transparent url(../images/dotbar.gif) repeat-x left 2px;
 }
@@ -380,14 +399,14 @@ key {
 	width:380px;
 }
 
-.properties .value {
+.value {
 	width:380px;
 	height:10px;
 	overflow:hidden;
 	cursor:text;
 }
 
-.properties .value:hover {
+.value:hover {
 	color: #0051AE;
 }
 
@@ -415,12 +434,12 @@ key {
 	background: url(../images/add_key_color.png) no-repeat;
 }
 
-.add_property_form, .add_environment_form {
+.add_property_form, .add_environment_form, clone_form {
 	float:left;
 	margin:-8px 0 0 -80px;
 	display:none;
 }
 
-.add_property_text, .add_environment_text {
+.add_property_text, .add_environment_text, clone_text {
 	width:120px;
 }
