@@ -199,8 +199,9 @@ class EnvironmentsController < EscController
             apps.push(app[:name])
         end
     
-        ret = {"apps", apps.sort, "owner", @myEnv.owner.name, "public_key", "temp key - seems to be problem with real key in javascript"};
-#        ret = {"apps", apps.sort, "public_key", @myEnv.public_key};
+        public_key = @myEnv.public_key
+        public_key = public_key.gsub("\n", "\\n") if !public_key.nil?     #need to escape newlines in json
+        ret = {"apps", apps.sort, "owner", @myEnv.owner.name, "public_key", public_key};
         response.headers["Content-Type"] = "application/json"
         return ret.to_json
     end

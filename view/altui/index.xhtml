@@ -5,9 +5,9 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 		<link href="altui/css/escape.css" rel="stylesheet" type="text/css">
-		<link href="altui/css/thickbox.css" rel="stylesheet" type="text/css" />
 	
 		<script type="text/javascript" src="/js/jquery.js"></script>
+		<script type="text/javascript" src="altui/js/jquery.livequery.js"></script>
 		<script type="text/javascript" src="/js/jquery.ui.all.js"></script>
 		<script type="text/javascript" src="/js/jquery.uitableedit.altui.js"></script>
 		<script type="text/javascript" src="altui/js/selected.js"></script>
@@ -55,12 +55,12 @@
 							<dl id="environments">
 								<dt id="env____template" style="display:none"><a href="javascript:void(0)"></a></dt>
 							</dl>
-							<div id="add_environment">
-								<img class="add_key" title="add new environment" style="margin:4px 90px 0 20px"/>
-								<form method="get" class="add_environment_form" action="javascript:void(0);">
+							<div id="create_environment">
+								<img class="add_key" title="create new environment" style="margin:4px 90px 0 20px"/>
+								<form method="get" class="create_environment_form" action="javascript:void(0);">
 									<fieldset>
-										<input class="add_environment_text" type="text"/>
-										<input class="add_environment_submit" type="submit" value="add"/>
+										<input class="create_environment_text" type="text"/>
+										<input class="create_environment_submit" type="submit" value="create"/>
 									</fieldset>
 								</form>
 							</div>
@@ -85,15 +85,21 @@
 								</tr>
 							</table>
 							<div id="selected_buttons">
-								<img id="clone_selected" title="clone environment"/>
-								<form method="get" class="clone_form" action="javascript:void(0);" style="display:none">
-									<fieldset>
-										<input class="clone_text" type="text"/>
-										<input class="clone_submit" type="submit" value="new env"/>
-									</fieldset>
-								</form>
-								<img id="delete_selected" title="delete environment"/>
+								<div id="add_application" class="add_div">
+									<img title="add application to environment"/>
+									<form method="get" action="javascript:void(0);">
+										<input type="text" onFocus="clearDefault(this)" onBlur="setDefault(this)" value="Add Application"/>
+									</form>
+								</div>
+								<div id="clone_environment" class="add_div">
+									<img title="clone environment"/>
+									<form method="get" action="javascript:void(0);">
+										<input type="text" onFocus="clearDefault(this)" onBlur="setDefault(this)" value="Clone Environment"/>
+									</form>
+								</div>
+								<img id="take_ownership" title="take ownership of environment"/>
 							</div>
+							<img id="delete_environment" title="delete environment"/>
 						</div>
 						<div class="selected_details_bottom"></div>
 			        

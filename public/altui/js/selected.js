@@ -20,8 +20,8 @@ function set_as_selected(envName, owner, public_key, items) {
 	propertiesTable.empty();
 	propertiesTable.append(create_selected_property('Owner', owner));
 	propertiesTable.append(create_selected_property('Public Key', public_key));
-	$('#clone_selected').attr("title", "clone " + envName);
-	$('#delete_selected').attr("title", "delete " + envName);
+	$('#clone_environment').attr("title", "clone " + envName);
+	$('#delete_environment').attr("title", "delete " + envName);
 	$('#selected_details').show();
     var itemsHTML = $('#items');
 	itemsHTML.empty();
@@ -90,6 +90,20 @@ function create_selected_property(key, value) {
 }
 
 
+function clearDefault(what) {
+    if (what.value == what.defaultValue) {
+        what.value = "";
+    }
+}
+
+function setDefault(what) {
+    if (what.value == "") {
+        what.value = what.defaultValue;
+        what.type = "text";
+    }
+}
+
+
 //----------------------------------------------
 
 function selected_name() {
@@ -119,7 +133,68 @@ $(document).ready(function() {
 	selectedPropertyTemplate = $("#selected_property_tr____template");
 	propertyTemplate = $("#property_tr____template");
 		
-	$('#delete_selected').live("click", function() {
+
+	$('.add_div img').live("click", function() {
+		$(this).parent().toggleClass("add_div_active");
+		$(this).siblings('form').toggle();
+		$(this).parent().siblings().toggle();
+	});
+
+	$('#clone_environment form').submit(function() {
+		var envName = selected_name();
+		var newEnvName = $.trim($("#clone_environment :text").val());
+		if (!confirm('Are you sure you want to create environment ' + newEnvName + ' as a clone of ' + envName + '?')) { return; }
+		$("#clone_environment :text").val("");
+		$.ajax({
+			beforeSend: function(request) {request.setRequestHeader("Content-Location", envName)},
+            type: "POST",
+            url: "/environments/" + newEnvName,
+            data: {},
+            success: function(data, textStatus) {
+			    search_for(newEnvName);
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert("Error cloning " + envName + " to " + newEnvName + ": " + XMLHttpRequest.responseText);
+            },
+	    })
+	});
+	
+
+	$('#add_application form').submit(function() {
+		var envName = selected_name();
+		var newAppName = $.trim($("#add_application :text").val());
+		$("#add_application :text").val("");
+        $.ajax({
+            type: "PUT",
+            url: "/environments/" + envName + "/" + newAppName,
+            data: {},
+            success: function(data, textStatus) {
+                load_environment(envName);
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert("Error creating new application '" + newAppName +"': " + XMLHttpRequest.responseText);
+            },
+	    })
+	});
+    
+
+	$('#take_ownership').live("click", function() {
+		var envName = selected_name();
+		if (!confirm('Are you sure you want to take ownership of ' + envName + '?')) { return; }
+		$.ajax({
+            type: "POST",
+            url: "/owner/" + envName,
+			success: function(data, textStatus) {
+                load_environment(envName);
+			},
+	        error: function(XMLHttpRequest, textStatus, errorThrown) {
+	            alert("Error taking ownership of '" + envName + "'\n" + XMLHttpRequest.responseText);
+	        },
+		})
+	});
+
+	
+	$('#delete_environment').live("click", function() {
 		var envName = selected_name();
 		if (!confirm('Are you sure you want to delete ' + envName + '?')) { return; }
 		$.ajax({
@@ -136,30 +211,6 @@ $(document).ready(function() {
 	});
 
 
-	$('#clone_selected').live("click", function() {
-		$(this).siblings("form").toggle();
-	});
-
-
-	$('.clone_submit').live("click", function() {
-		var envName = selected_name();
-		if (!confirm('Are you sure you want to clone ' + envName + '?')) { return; }
-		var newEnvName = $.trim($(this).siblings(".clone_text").val());
-		$(this).siblings(".clone_text").val("");
-		$(this).parent().hide();
-		$.ajax({
-			beforeSend: function(request) {request.setRequestHeader("Content-Location", envName)},
-            type: "POST",
-            url: "/environments/" + newEnvName,
-            data: {},
-            success: function(data, textStatus) {
-			    search_for(newEnvName);
-            },
-            error: function(XMLHttpRequest, textStatus, errorThrown) {
-                alert("Error cloning " + envName + " to " + newEnvName + ": " + XMLHttpRequest.responseText);
-            },
-	    })
-	});
 	
 	
 	$('.open_item').live("click", function() {

@@ -34,7 +34,7 @@ function search_for_json(url) {
 	$.getJSON(url,
         function(data) {
             $.each(data["envs"], function(i, envName) {
-				add_environment(envName);
+				create_environment(envName);
             });
             $.each(data["apps"], function(i, appName) {
 				add_application(appName);
@@ -44,7 +44,7 @@ function search_for_json(url) {
     );
 }
 
-function add_environment(envName) {
+function create_environment(envName) {
 	var env = envTemplate.clone().attr("id", "env_" + envName).show();
 	env.find("a").text(envName);
 	$('#environments').append(env);
@@ -90,8 +90,8 @@ $(document).ready(function() {
 		select_environment($(this).text());
 	});
 
-	$('.add_environment_submit').live("click", function() {
-		var textField = $(this).siblings(".add_environment_text");
+	$('.create_environment_submit').live("click", function() {
+		var textField = $(this).siblings(".create_environment_text");
 		var envName = textField.val();
 		textField.val("");
 		if (notDefined(envName)) { alert("Unable to add blank environment"); return; }
@@ -101,7 +101,7 @@ $(document).ready(function() {
 	        url: "/environments/" + envName,
 	        data: "",
 	        success: function(XMLHttpRequest, textStatus) {
-				add_environment(envName);
+				create_environment(envName);
 	        },
 		    error: function(XMLHttpRequest, textStatus, errorThrown) {
 		        alert("Error adding environment '" + envName +"'\n" + XMLHttpRequest.responseText);
