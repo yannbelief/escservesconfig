@@ -62,7 +62,7 @@ a:hover {
 }
 
 form fieldset {
-	margin:10px 0 0 0;
+	margin:5px 0 0 0;
 	border:medium;
 }
 
@@ -164,8 +164,9 @@ form fieldset {
     color:#0051AE;
 }
 
-.search_results dl, #add_environment, #add_application {
+.search_results dl, #create_environment {
     float:left;
+	margin:0px;
 	width: 235px;
 }
 
@@ -224,7 +225,7 @@ form fieldset {
 #selected_properties {
 	float:left;
     width:663px;
-	margin:10px 0 10px 0;
+	margin:5px 0 0 0;
     padding:10px 11px;
 	font-size:11px;
 	color:#3E3E3E;
@@ -239,33 +240,63 @@ form fieldset {
 }
 
 #selected_buttons {
-	float:right;
+	clear:left;
+	width:663px;
 }
 
-#clone_selected {
+
+
+
+/* Items */
+.add_div {
 	float:left;
-	background: url(../images/clone_selected_grey.png) no-repeat;
-    height:29px;
-    width:34px;
-	cursor:pointer;
+    height:22px;
 }
 
-#clone_selected:hover {
-	background: url(../images/clone_selected_color.png) no-repeat;
+.add_div_active {
+	width:260px;
 }
 
-#delete_selected, .delete_item {
-	float:right;
-	background: url(../images/delete_item_grey.png) no-repeat;
-    height:29px;
-    width:33px;
-	cursor:pointer;
+.add_div img {
+	float:left;
+	background: url(../images/add_app_grey.png) no-repeat 0 3px;
+    height:22px;
+    width:36px;
+	cursor:pointer;	
 }
 
-#delete_selected:hover, .delete_item:hover {
-	background: url(../images/delete_item_color.png) no-repeat;
+.add_div img:hover {
+	background: url(../images/add_app_color.png) no-repeat 0 3px;
 }
 
+.add_div form {
+	display:none;
+}
+
+.add_div input {
+	font-size:10px;
+	width:200px;
+}
+
+#clone_environment img {
+	background: url(../images/clone_env_grey.png) no-repeat;
+}
+
+#clone_environment img:hover {
+	background: url(../images/clone_env_color.png) no-repeat;
+}
+
+#take_ownership {
+	float:left;
+	background: url(../images/take_own_grey.png) no-repeat 0 3px;
+    height:22px;
+    width:36px;
+	cursor:pointer;	
+}
+
+#take_ownership:hover {
+	background: url(../images/take_own_color.png) no-repeat 0 3px;
+}
 
 
 
@@ -328,7 +359,7 @@ form fieldset {
 	float:left;
 	clear:both;
 	height:1px;
-	width:573px;
+	width:600px;
 	border-top:1px solid #C7C7C7;
 	margin:10px 0 10px 0;
 }
@@ -365,6 +396,17 @@ form fieldset {
 	background: url(../images/open_item_color.png) no-repeat;
 }
 
+#delete_environment, .delete_item {
+	float:right;
+	background: url(../images/delete_item_grey.png) no-repeat;
+    height:29px;
+    width:33px;
+	cursor:pointer;
+}
+
+#delete_environment:hover, .delete_item:hover {
+	background: url(../images/delete_item_color.png) no-repeat;
+}
 
 
 
@@ -379,14 +421,20 @@ form fieldset {
 
 .properties table, #selected_properties table {
 	float:left;
+	width:600px;
 	margin:0px;
 	padding:0px;
-	width:580px;
 	list-style-type:none;
+	table-layout:fixed;
+}
+
+#selected_properties table {
+	margin:0 0 15px 0;
 }
 
 .keydots {
-    width:150px;
+	vertical-align:top;
+    width:130px;
 	background:transparent url(../images/dotbar.gif) repeat-x left 2px;
 }
 
@@ -395,19 +443,20 @@ key {
 	background-color:#FFFFFF;
 }
 
-.td_edit {
-	width:380px;
-}
-
 .value {
-	width:380px;
+	width:410px;      /* need width to display RSA key fully - it has line breaks at this width */
 	height:10px;
 	overflow:hidden;
 	cursor:text;
+	word-wrap:break-word;
 }
 
 .value:hover {
 	color: #0051AE;
+}
+
+.td_edit {     /* used when editing property value */
+	width:370px;
 }
 
 .delete_property {
@@ -420,6 +469,7 @@ key {
 .delete_property:hover {
     background-position:0px 0px;
 }
+
 
 .add_key {
 	float:left;
@@ -434,12 +484,12 @@ key {
 	background: url(../images/add_key_color.png) no-repeat;
 }
 
-.add_property_form, .add_environment_form, clone_form {
+.add_property_form, .create_environment_form {
 	float:left;
 	margin:-8px 0 0 -80px;
 	display:none;
 }
 
-.add_property_text, .add_environment_text, clone_text {
+.add_property_text, .create_environment_text {
 	width:120px;
 }

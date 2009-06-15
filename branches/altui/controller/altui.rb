@@ -16,6 +16,8 @@
 class AltUIController < EscController
 	map '/altui'
 	
+#	  layout('index'){|path, wish| wish == 'html' }
+	
     def index
     end    
     
