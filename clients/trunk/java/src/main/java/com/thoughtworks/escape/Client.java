@@ -20,6 +20,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
 
+/**
+ * Escape client 
+ */
 public class Client {
 
 	/**

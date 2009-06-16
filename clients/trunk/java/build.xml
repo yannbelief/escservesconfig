@@ -8,6 +8,7 @@
     <property name="test.dir" value="${basedir}/src/test/java"/>
     <property name="reports.dir" value="${target.dir}/reports"/>
     <property name="dist.dir" value="${target.dir}/dist"/>
+    <property name="javadoc.dir" value="${target.dir}/doc"/>
 
     <path id="test.class.path">
         <pathelement location="${main.classes.dir}"/>
@@ -43,7 +44,7 @@
     <target name="test" depends="compile">
         <mkdir dir="${reports.dir}"/>
         <junit printsummary="true" tempdir="${reports.dir}" fork="false"
-        haltonerror="false" haltonfailure="false" timeout="60000">
+        	haltonerror="false" haltonfailure="false" timeout="60000">
             <classpath>
                 <path refid="test.class.path"/>
                 <pathelement location="${test.classes.dir}"/>
@@ -59,7 +60,7 @@
         <fail if="unit.test.failed" message="Unit tests failed"/>
     </target>
 
-    <target name="package" depends="compile, get.svn.info">
+    <target name="package" depends="compile, document, get.svn.info">
         <mkdir dir="${dist.dir}"/>
 
         <jar destfile="${dist.dir}/${ant.project.name}.jar" compress="true" basedir="${main.classes.dir}">
@@ -68,7 +69,17 @@
                 <attribute name="Svn-Url" value="${svn.url}"/>
             </manifest>
         </jar>
+    	
+    	<zip destfile="${dist.dir}/${ant.project.name}-doc.zip" >
+    		<fileset dir="${javadoc.dir}" />
+    	</zip>
     </target>
 
+	<target name="document" depends="test">
+		<mkdir dir="${javadoc.dir}"/>
+		<javadoc sourcepath="${src.dir}" destdir="${javadoc.dir}" />
+	</target>
+	
     <target name="build" description="Build and test our package" depends="clean, compile, test, package"/>
+
 </project>
