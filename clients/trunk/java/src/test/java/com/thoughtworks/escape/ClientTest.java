@@ -1,5 +1,3 @@
-package com.thoughtworks.escape;
-
 /*
  #   Copyright 2009 ThoughtWorks
  #
@@ -16,6 +14,8 @@ package com.thoughtworks.escape;
  #   limitations under the License.
  */
 
+package com.thoughtworks.escape;
+
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 import static org.junit.matchers.JUnitMatchers.*;
@@ -29,12 +29,11 @@ import java.util.Properties;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
+import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.junit.Before;
 import org.junit.Test;
 
 public class ClientTest {
-	
-	private static HttpClient HTTP_CLIENT = new HttpClient();
 	
 	private static final String HOST = "http://localhost:7000";
 	private static final String ENVIRONMENT_NAME = "default";
@@ -83,29 +82,29 @@ public class ClientTest {
 
 	private void assertEscapeIsRunning() {
 		try {
-			assertThat(HTTP_CLIENT.executeMethod(new GetMethod(HOST)), is(200));
+			assertThat(new HttpClient().executeMethod(new GetMethod(HOST)), is(200));
 		} catch (IOException e) {
-			fail(String.format("Can't connect to Escape server at %s -- check that the escape server is running", HOST));
+			fail(String.format("Can't connect to Escape server at URI [%s] --> make sure that Escape is running", HOST));
 		}
 	}
 
 	private void addApplication() {
 		try {
-			assertThat(HTTP_CLIENT.executeMethod(new PutMethod(escapeApplicationBaseUrl)), either(is(200)).or(is(201)));
+			assertThat(new HttpClient().executeMethod(new PutMethod(escapeApplicationBaseUrl)), either(is(200)).or(is(201)));
 		} catch (IOException e) {
-			fail(String.format("Failed to add application to Escape using [%s]", escapeApplicationBaseUrl));
+			fail(String.format("Failed to add application to Escape using URI [%s]", escapeApplicationBaseUrl));
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	private void addProperty(String key, String value) {
 		final String url = escapeApplicationBaseUrl + key;
+
 		try {
 			PutMethod putMethod = new PutMethod(url);
-			putMethod.setRequestBody(value);
-			assertThat(HTTP_CLIENT.executeMethod(putMethod), either(is(200)).or(is(201)));
+			putMethod.setRequestEntity(new StringRequestEntity(value, "text/plain", "utf-8"));
+			assertThat(new HttpClient().executeMethod(putMethod), either(is(200)).or(is(201)));
 		} catch (IOException e) {
-			fail(String.format("Failed to add property to Escape application using [%s]", url));
+			fail(String.format("Failed to add property to Escape application using URI [%s]", url));
 		}
 	}
 
