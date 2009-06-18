@@ -10,8 +10,13 @@
     <property name="dist.dir" value="${target.dir}/dist"/>
     <property name="javadoc.dir" value="${target.dir}/doc"/>
 
-    <path id="test.class.path">
+    <path id="main.class.path">
+        <fileset dir="${lib.dir}/runtime" includes="*.jar"/>
+    </path>
+
+	<path id="test.class.path">
         <pathelement location="${main.classes.dir}"/>
+        <fileset dir="${lib.dir}/runtime" includes="*.jar"/>
         <fileset dir="${lib.dir}/test" includes="*.jar"/>
     </path>
 
@@ -37,7 +42,7 @@
     <target name="compile">
         <mkdir dir="${main.classes.dir}"/>
         <mkdir dir="${test.classes.dir}"/>
-        <javac source="1.5" target="1.5" srcdir="${src.dir}" destdir="${main.classes.dir}"/>
+        <javac source="1.5" target="1.5" classpathref="main.class.path" srcdir="${src.dir}" destdir="${main.classes.dir}"/>
         <javac source="1.5" target="1.5" classpathref="test.class.path" srcdir="${test.dir}" destdir="${test.classes.dir}"/>
     </target>
 
@@ -70,6 +75,11 @@
             </manifest>
         </jar>
     	
+    	<jar destfile="${dist.dir}/${ant.project.name}-with-dependencies.jar" compress="true" >
+    		<zipgroupfileset dir="${lib.dir}/runtime" includes="*.jar"/>
+    		<zipgroupfileset file="${dist.dir}/${ant.project.name}.jar"/>
+    	</jar>
+    	
     	<zip destfile="${dist.dir}/${ant.project.name}-doc.zip" >
     		<fileset dir="${javadoc.dir}" />
     	</zip>
@@ -77,7 +87,10 @@
 
 	<target name="document" depends="test">
 		<mkdir dir="${javadoc.dir}"/>
-		<javadoc sourcepath="${src.dir}" destdir="${javadoc.dir}" />
+		<javadoc sourcepath="${src.dir}" destdir="${javadoc.dir}" packagenames="com.thoughtworks.escape.*"
+			classpathref="main.class.path" public="true">
+			<link href="http://commons.apache.org/configuration/apidocs" />
+		</javadoc>
 	</target>
 	
     <target name="build" description="Build and test our package" depends="clean, compile, test, package"/>

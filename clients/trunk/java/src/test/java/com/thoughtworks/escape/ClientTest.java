@@ -16,9 +16,7 @@
 
 package com.thoughtworks.escape;
 
-import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
-import static org.junit.matchers.JUnitMatchers.*;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -26,22 +24,10 @@ import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.util.Properties;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.PutMethod;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
-import org.junit.Before;
 import org.junit.Test;
 
-public class ClientTest {
+public class ClientTest extends BaseTest {
 	
-	private static final String HOST = "http://localhost:7000";
-	private static final String ENVIRONMENT_NAME = "default";
-	private static final String APPLICATION_NAME = "esc-client-java";
-
-	private static final String escapeBaseUrl = HOST + "/environments/";
-	private static final String escapeApplicationBaseUrl = escapeBaseUrl + ENVIRONMENT_NAME + "/" + APPLICATION_NAME;
-
 	@Test
 	public void testCanGetPropertiesFromEscapeServer() throws IOException {
 		Properties properties = Client.getProperties(HOST, ENVIRONMENT_NAME, APPLICATION_NAME);
@@ -72,40 +58,4 @@ public class ClientTest {
 		Client.getProperties(HOST, ENVIRONMENT_NAME, "non-existing-app");
 	}
 	
-	@Before
-	public void setUpTestData() throws IOException {
-		assertEscapeIsRunning();
-		addApplication();
-		addProperty("key1", "value1");
-		addProperty("key2", "value2");
-	}
-
-	private void assertEscapeIsRunning() {
-		try {
-			assertThat(new HttpClient().executeMethod(new GetMethod(HOST)), is(200));
-		} catch (IOException e) {
-			fail(String.format("Can't connect to Escape server at URI [%s] --> make sure that Escape is running", HOST));
-		}
-	}
-
-	private void addApplication() {
-		try {
-			assertThat(new HttpClient().executeMethod(new PutMethod(escapeApplicationBaseUrl)), either(is(200)).or(is(201)));
-		} catch (IOException e) {
-			fail(String.format("Failed to add application to Escape using URI [%s]", escapeApplicationBaseUrl));
-		}
-	}
-
-	private void addProperty(String key, String value) {
-		final String url = escapeApplicationBaseUrl + key;
-
-		try {
-			PutMethod putMethod = new PutMethod(url);
-			putMethod.setRequestEntity(new StringRequestEntity(value, "text/plain", "utf-8"));
-			assertThat(new HttpClient().executeMethod(putMethod), either(is(200)).or(is(201)));
-		} catch (IOException e) {
-			fail(String.format("Failed to add property to Escape application using URI [%s]", url));
-		}
-	}
-
 }
