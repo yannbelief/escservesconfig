@@ -55,13 +55,10 @@
 							<dl id="environments">
 								<dt id="env____template" style="display:none"><a href="javascript:void(0)"></a></dt>
 							</dl>
-							<div id="create_environment">
-								<img class="add_key" title="create new environment" style="margin:4px 90px 0 20px"/>
-								<form method="get" class="create_environment_form" action="javascript:void(0);">
-									<fieldset>
-										<input class="create_environment_text" type="text"/>
-										<input class="create_environment_submit" type="submit" value="create"/>
-									</fieldset>
+							<div id="create_environment" class="add_div">
+								<img title="create new environment"/>
+								<form method="get" action="javascript:void(0);">
+									<input type="text" onFocus="clearDefault(this)" onBlur="setDefault(this)" value="Create Environment"/>
 								</form>
 							</div>
 							<div class="title">Applications</div>
@@ -101,7 +98,7 @@
 							</div>
 							<img id="delete_environment" title="delete environment"/>
 						</div>
-						<div class="selected_details_bottom"></div>
+						<div class="selected_details_topbot"></div>
 			        
 						<div id="items">
 							<div id="item____template" class="item" style="display:none">
@@ -126,13 +123,14 @@
 														<td class="delete_property" title="delete property"/>
 													</tr>
 												</table>
-												<img class="add_key" title="add new key"/>
-												<form method="get" class="add_property_form" action="javascript:void(0);">
-													<fieldset>
-														<input class="add_property_text" type="text"/>
-														<input class="add_property_submit" type="submit" value="add key"/>
-													</fieldset>
-												</form>
+												<div class="add_property add_div">
+													<img title="add new property"/>
+													<form method="get" action="javascript:void(0);">
+														<input class="input-key" type="text" onFocus="clearDefault(this)" onBlur="setDefault(this)" value="Key"/>
+														<input class="input-value" type="text" onFocus="clearDefault(this)" onBlur="setDefault(this)" value="Value"/>  
+														<input class="input-hidden" type="submit"/>  
+													</form>
+												</div>
 												<img class="delete_item" title="delete this"/>
 											</div>
 										</div>
@@ -142,7 +140,7 @@
 							</div>
 
 						</div>
-						<div class="selected_details_bottom"></div>
+						<div class="selected_details_topbot"></div>
 			       </div>
 				</div>
 			</div>

@@ -90,9 +90,14 @@ $(document).ready(function() {
 		select_environment($(this).text());
 	});
 
-	$('.create_environment_submit').live("click", function() {
-		var textField = $(this).siblings(".create_environment_text");
-		var envName = textField.val();
+	$('.add_div img').live("click", function() {
+		$(this).parent().toggleClass("add_div_active");
+		$(this).siblings('form').toggle();
+	});
+
+	$('#create_environment form').submit(function() {
+		var textField = $("#create_environment :text");
+		var envName = $.trim(textField.val());
 		textField.val("");
 		if (notDefined(envName)) { alert("Unable to add blank environment"); return; }
 
@@ -101,12 +106,11 @@ $(document).ready(function() {
 	        url: "/environments/" + envName,
 	        data: "",
 	        success: function(XMLHttpRequest, textStatus) {
-				create_environment(envName);
+				search_for(envName);
 	        },
 		    error: function(XMLHttpRequest, textStatus, errorThrown) {
 		        alert("Error adding environment '" + envName +"'\n" + XMLHttpRequest.responseText);
 		    },
 	    });
 	});
-	
 });
