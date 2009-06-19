@@ -9,6 +9,9 @@
     <property name="reports.dir" value="${target.dir}/reports"/>
     <property name="dist.dir" value="${target.dir}/dist"/>
     <property name="javadoc.dir" value="${target.dir}/doc"/>
+    <property name="maven.dir" value="${basedir}/src/main/maven"/>
+	<property name="version" value="0.3"/>
+
 
     <path id="main.class.path">
         <fileset dir="${lib.dir}/runtime" includes="*.jar"/>
@@ -65,26 +68,6 @@
         <fail if="unit.test.failed" message="Unit tests failed"/>
     </target>
 
-    <target name="package" depends="compile, document, get.svn.info">
-        <mkdir dir="${dist.dir}"/>
-
-        <jar destfile="${dist.dir}/${ant.project.name}.jar" compress="true" basedir="${main.classes.dir}">
-            <manifest>
-                <attribute name="Svn-Revision" value="${svn.revision}"/>
-                <attribute name="Svn-Url" value="${svn.url}"/>
-            </manifest>
-        </jar>
-    	
-    	<jar destfile="${dist.dir}/${ant.project.name}-with-dependencies.jar" compress="true" >
-    		<zipgroupfileset dir="${lib.dir}/runtime" includes="*.jar"/>
-    		<zipgroupfileset file="${dist.dir}/${ant.project.name}.jar"/>
-    	</jar>
-    	
-    	<zip destfile="${dist.dir}/${ant.project.name}-doc.zip" >
-    		<fileset dir="${javadoc.dir}" />
-    	</zip>
-    </target>
-
 	<target name="document" depends="test">
 		<mkdir dir="${javadoc.dir}"/>
 		<javadoc sourcepath="${src.dir}" destdir="${javadoc.dir}" packagenames="com.thoughtworks.escape.*"
@@ -92,7 +75,34 @@
 			<link href="http://commons.apache.org/configuration/apidocs" />
 		</javadoc>
 	</target>
-	
+				
+    <target name="package" depends="compile, document, get.svn.info">
+        <mkdir dir="${dist.dir}"/>
+
+        <jar destfile="${dist.dir}/${ant.project.name}-${version}.jar" compress="true" basedir="${main.classes.dir}">
+            <manifest>
+                <attribute name="Svn-Revision" value="${svn.revision}"/>
+                <attribute name="Svn-Url" value="${svn.url}"/>
+            </manifest>
+        </jar>
+    	
+    	<jar destfile="${dist.dir}/${ant.project.name}-${version}-with-dependencies.jar" compress="true" >
+    		<zipgroupfileset dir="${lib.dir}/runtime" includes="*.jar"/>
+    		<zipgroupfileset file="${dist.dir}/${ant.project.name}.jar"/>
+    	</jar>
+    	
+    	<zip destfile="${dist.dir}/${ant.project.name}-${version}-doc.zip" >
+    		<fileset dir="${javadoc.dir}" />
+    	</zip>
+
+    	<zip destfile="${dist.dir}/${ant.project.name}-${version}-artifactory-bundle.zip">
+    		<zipfileset dir="${dist.dir}" includes="${ant.project.name}-${version}.jar" 
+    			prefix="com/thoughtworks/escape/${ant.project.name}/${version}"/>
+    		<zipfileset dir="${maven.dir}" includes="*.pom" 
+    			prefix="com/thoughtworks/escape/${ant.project.name}/${version}"/>
+    	</zip>
+    </target>
+
     <target name="build" description="Build and test our package" depends="clean, compile, test, package"/>
 
 </project>
