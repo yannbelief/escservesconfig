@@ -126,6 +126,13 @@ function notDefined(value) {
 	return (value == null) || (value.length == 0);
 }
 
+function getAndClearVal(what) {
+	var val = $.trim(what.val());
+	what.val("");
+	return val;
+}
+
+
 
 $(document).ready(function() {
 	
@@ -134,17 +141,15 @@ $(document).ready(function() {
 	propertyTemplate = $("#property_tr____template");
 		
 
-	$('.add_div img').live("click", function() {
-		$(this).parent().toggleClass("add_div_active");
-		$(this).siblings('form').toggle();
-		$(this).parent().siblings().toggle();
+	$('#clone_environment img').live("click", function() {
+			$(this).parent().siblings().toggle();
 	});
 
 	$('#clone_environment form').submit(function() {
 		var envName = selected_name();
-		var newEnvName = $.trim($("#clone_environment :text").val());
+		var newEnvName = getAndClearVal($("#clone_environment :text"));
 		if (!confirm('Are you sure you want to create environment ' + newEnvName + ' as a clone of ' + envName + '?')) { return; }
-		$("#clone_environment :text").val("");
+		$(this).siblings("img").click();    /* close the form */
 		$.ajax({
 			beforeSend: function(request) {request.setRequestHeader("Content-Location", envName)},
             type: "POST",
@@ -160,11 +165,15 @@ $(document).ready(function() {
 	});
 	
 
+	$('#add_application img').live("click", function() {
+			$(this).parent().siblings().toggle();
+	});
+
 	$('#add_application form').submit(function() {
 		var envName = selected_name();
-		var newAppName = $.trim($("#add_application :text").val());
-		$("#add_application :text").val("");
-        $.ajax({
+		var newAppName = getAndClearVal($("#add_application :text"));
+		$(this).siblings("img").click();    /* close the form */
+		$.ajax({
             type: "PUT",
             url: "/environments/" + envName + "/" + newAppName,
             data: {},
@@ -266,20 +275,15 @@ $(document).ready(function() {
 	});
 
 
-	$('.add_key').live("click", function() {
-		$(this).siblings("form").toggle();
-	});
 
-
-	$('.add_property_submit').live("click", function() {
+	$('.add_property form').livequery('submit', function() {
 		var envName = selected_name();
 		var appName = app_name(this);
-		var keyField = $(this).siblings(".add_property_text");
-		var key = $.trim(keyField.val());
+		var key = getAndClearVal($(this).children(".input-key"));
+		var value = getAndClearVal($(this).children(".input-value"));
 		if (notDefined(envName) || notDefined(appName) || notDefined(key)) { alert("Unable to add key '" + key + "' to '" + envName + "':'" + appName + "'"); return; }
-		keyField.val("");
-		var value = "";
 		var item = jItem(this);
+		$(this).siblings("img").click();    /* close the form */
 
 	    $.ajax({
 	        type: "PUT",
@@ -293,6 +297,7 @@ $(document).ready(function() {
 		    },
 	    });
 	});
+
 	
 	
 	$('.delete_property').live("click", function() {

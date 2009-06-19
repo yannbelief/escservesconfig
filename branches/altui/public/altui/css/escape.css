@@ -164,7 +164,7 @@ form fieldset {
     color:#0051AE;
 }
 
-.search_results dl, #create_environment {
+.search_results dl {
     float:left;
 	margin:0px;
 	width: 235px;
@@ -182,6 +182,22 @@ form fieldset {
     color:#11366F;
 }
 
+#create_environment {
+	width:235px;
+	margin:4px 0 0 20px;
+}
+
+#create_environment input {
+	width:160px;
+}
+
+#create_environment img {
+	background: url(../images/add_key_grey.png) no-repeat;
+}
+
+#create_environment img:hover {
+	background: url(../images/add_key_color.png) no-repeat;
+}
 
 
 
@@ -219,6 +235,7 @@ form fieldset {
     background:transparent url(../images/selected_side.gif) repeat-y scroll left top;
     float:left;
     width:685px;
+	margin:0 0 40px 0;
     z-index:0;
 }
 
@@ -232,7 +249,7 @@ form fieldset {
     position: relative;
 }
 
-.selected_details_bottom {
+.selected_details_topbot {
     height:4px;
 	width:685px;
     clear:both;
@@ -242,6 +259,7 @@ form fieldset {
 #selected_buttons {
 	clear:left;
 	width:663px;
+	margin:0 0 0 4px;
 }
 
 
@@ -444,7 +462,7 @@ key {
 }
 
 .value {
-	width:410px;      /* need width to display RSA key fully - it has line breaks at this width */
+	width:410px;      /* need width to display RSA key fully - it has line breaks at about 410px */
 	height:10px;
 	overflow:hidden;
 	cursor:text;
@@ -461,35 +479,32 @@ key {
 
 .delete_property {
     float:right;
-	background: url(../images/delete_property.png) no-repeat 0px -21px;
+	background: url(../images/delete_property_grey.png) no-repeat;
     height:11px;
     width:11px;
 }
 
 .delete_property:hover {
-    background-position:0px 0px;
+	background: url(../images/delete_property_color.png) no-repeat;
 }
 
-
-.add_key {
-	float:left;
-	margin:6px 100px 0 4px;
-	background: url(../images/add_key_grey.png) no-repeat;
-    height:16px;
-    width:16px;
-	cursor:pointer;
+.add_property {
+	width:600px;
+	margin:6px 0 0 4px;
 }
 
-.add_key:hover {
-	background: url(../images/add_key_color.png) no-repeat;
+.add_property img {
+	background: url(../images/add_property_grey.png) no-repeat;
 }
 
-.add_property_form, .create_environment_form {
-	float:left;
-	margin:-8px 0 0 -80px;
-	display:none;
+.add_property img:hover {
+	background: url(../images/add_property_color.png) no-repeat;
 }
 
-.add_property_text, .create_environment_text {
-	width:120px;
+.input-hidden     /* to get a form with 2 text fields to submit on enter you need a button.  ie6 doesn't work if you set the button to display:hidden so you have to do this.  */
+{
+   border            : none !important;
+   height            : 0px !important;
+   padding            : 0px !important;
+   width            : 0px !important;
 }
