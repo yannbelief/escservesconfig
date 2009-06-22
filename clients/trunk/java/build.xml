@@ -71,7 +71,7 @@
 	<target name="document" depends="test">
 		<mkdir dir="${javadoc.dir}"/>
 		<javadoc sourcepath="${src.dir}" destdir="${javadoc.dir}" packagenames="com.thoughtworks.escape.*"
-			classpathref="main.class.path" public="true">
+			classpathref="main.class.path" public="true" noqualifier="java.lang">
 			<link href="http://commons.apache.org/configuration/apidocs" />
 		</javadoc>
 	</target>

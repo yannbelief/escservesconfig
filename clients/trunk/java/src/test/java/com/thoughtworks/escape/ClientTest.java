@@ -28,9 +28,12 @@ import org.junit.Test;
 
 public class ClientTest extends BaseTest {
 	
+	private final String baseUrl = escapeUrlFor("/").toString();
+
 	@Test
 	public void testCanGetPropertiesFromEscapeServer() throws IOException {
-		Properties properties = Client.getProperties(HOST, ENVIRONMENT_NAME, APPLICATION_NAME);
+		System.out.println(baseUrl);
+		Properties properties = Client.getProperties(baseUrl, DEFAULT_ENVIRONMENT, EXAMPLE_APPLICATION);
 
 		assertTrue(properties.containsKey("key1"));
 		assertTrue(properties.containsKey("key2"));
@@ -40,22 +43,22 @@ public class ClientTest extends BaseTest {
 
 	@Test(expected=ConnectException.class)
 	public void testThatConnectExceptionIsThrownWhenServerIsDown() throws IOException {
-		Client.getProperties("http://localhost:700", ENVIRONMENT_NAME, APPLICATION_NAME);
+		Client.getProperties("http://localhost:700", DEFAULT_ENVIRONMENT, EXAMPLE_APPLICATION);
 	}
 
 	@Test(expected=MalformedURLException.class)
 	public void testThatMalformedURLExceptionIsThrownOnBadURL() throws IOException {
-		Client.getProperties("sheep://cheese", ENVIRONMENT_NAME, APPLICATION_NAME);
+		Client.getProperties("sheep://cheese", DEFAULT_ENVIRONMENT, EXAMPLE_APPLICATION);
 	}
 
 	@Test(expected=FileNotFoundException.class)
 	public void testThatBadEnvThrowsFileNotFoundException() throws IOException {
-		Client.getProperties(HOST, "non-existing-env", APPLICATION_NAME);
+		Client.getProperties(baseUrl, "non-existing-env", EXAMPLE_APPLICATION);
 	}
 
 	@Test(expected=FileNotFoundException.class)
 	public void testThatBadAppThrowsFileNotFoundException() throws IOException {
-		Client.getProperties(HOST, ENVIRONMENT_NAME, "non-existing-app");
+		Client.getProperties(baseUrl, DEFAULT_ENVIRONMENT, "non-existing-app");
 	}
 	
 }

@@ -12,7 +12,7 @@ import org.junit.Test;
 public class EscapeConfigurationTest extends BaseTest {
 
 	@Test
-	public void shouldGetPropertiesFromEscape() throws Exception {
+	public void shouldGetPropertiesCorrectly() throws Exception {
 		EscapeConfiguration configuration = new EscapeConfiguration(
 				"localhost", 7000, "default", "esc-client-java");
 		assertThat(configuration.getString("key1"), is("value1"));
@@ -61,5 +61,33 @@ public class EscapeConfigurationTest extends BaseTest {
 		assertThat(configuration.isEmpty(), is(false));
 		configuration.clear();
 		assertThat(configuration.isEmpty(), is(true));
+	}
+	
+	@Test
+	public void shouldDecryptEncryptedPropertiesAutomatically() throws Exception {
+		final String environment =  "joes";
+		final String application =  "myapp";
+		final String user =  "joe";
+		final String password =  "joe";
+		final String key =  "secret";
+		final String value =  "secret";
+		
+		addEnvironment(environment);
+		addUser(user, password);
+		ownEnvironment(environment, user, password);
+		addApplication(environment, application);
+		addProperty(environment, application, key, value);
+
+		EscapeConfiguration configuration = new EscapeConfiguration(
+				"localhost", 7000, environment, application);
+
+		assertThat(configuration.getString(key), is(value));
+		addEncryptedProperty(environment, application, key, value, user, password);
+		assertThat(configuration.getString(key), is(not(value)));
+		
+		removeApplication(environment, application);
+		removeApplication(DEFAULT_ENVIRONMENT, application);
+		removeUser(user, password);
+		removeEnvironment(environment);
 	}
 }
