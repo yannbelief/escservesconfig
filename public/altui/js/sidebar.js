@@ -71,6 +71,12 @@ function select_environment(newlySelected) {
 }
 
 
+function getAndClearVal(what) {
+	var val = $.trim(what.val());
+	what.val("");
+	return val;
+}
+
 
 //----------------------------------------------
 
@@ -90,15 +96,13 @@ $(document).ready(function() {
 		select_environment($(this).text());
 	});
 
-	$('.add_div img').live("click", function() {
+	$('.add_div a').live("click", function() {
 		$(this).parent().toggleClass("add_div_active");
 		$(this).siblings('form').toggle();
 	});
 
 	$('#create_environment form').submit(function() {
-		var textField = $("#create_environment :text");
-		var envName = $.trim(textField.val());
-		textField.val("");
+		var envName = getAndClearVal($("#create_environment :text"));
 		if (notDefined(envName)) { alert("Unable to add blank environment"); return; }
 
 	    $.ajax({

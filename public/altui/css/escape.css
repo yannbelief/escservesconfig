@@ -187,18 +187,20 @@ form fieldset {
 	margin:4px 0 0 20px;
 }
 
-#create_environment input {
-	width:160px;
-}
-
-#create_environment img {
+#create_environment a {
+	float:left;
+	height:16px;
+	width:16px;
 	background: url(../images/add_key_grey.png) no-repeat;
 }
 
-#create_environment img:hover {
+#create_environment a:hover {
 	background: url(../images/add_key_color.png) no-repeat;
 }
 
+#create_environment input {
+	width:160px;
+}
 
 
 
@@ -275,15 +277,15 @@ form fieldset {
 	width:260px;
 }
 
-.add_div img {
+.add_div a {
 	float:left;
 	background: url(../images/add_app_grey.png) no-repeat 0 3px;
     height:22px;
-    width:36px;
+    width:32px;
 	cursor:pointer;	
 }
 
-.add_div img:hover {
+.add_div a:hover {
 	background: url(../images/add_app_color.png) no-repeat 0 3px;
 }
 
@@ -294,13 +296,14 @@ form fieldset {
 .add_div input {
 	font-size:10px;
 	width:200px;
+	margin:0 0 0 10px;
 }
 
-#clone_environment img {
+#clone_environment a {
 	background: url(../images/clone_env_grey.png) no-repeat;
 }
 
-#clone_environment img:hover {
+#clone_environment a:hover {
 	background: url(../images/clone_env_color.png) no-repeat;
 }
 
@@ -475,6 +478,7 @@ key {
 
 .td_edit {     /* used when editing property value */
 	width:370px;
+	font-size:10px;
 }
 
 .delete_property {
@@ -493,11 +497,11 @@ key {
 	margin:6px 0 0 4px;
 }
 
-.add_property img {
+.add_property a {
 	background: url(../images/add_property_grey.png) no-repeat;
 }
 
-.add_property img:hover {
+.add_property a:hover {
 	background: url(../images/add_property_color.png) no-repeat;
 }
 

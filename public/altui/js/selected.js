@@ -126,12 +126,6 @@ function notDefined(value) {
 	return (value == null) || (value.length == 0);
 }
 
-function getAndClearVal(what) {
-	var val = $.trim(what.val());
-	what.val("");
-	return val;
-}
-
 
 
 $(document).ready(function() {
@@ -141,7 +135,7 @@ $(document).ready(function() {
 	propertyTemplate = $("#property_tr____template");
 		
 
-	$('#clone_environment img').live("click", function() {
+	$('#clone_environment a').live("click", function() {
 			$(this).parent().siblings().toggle();
 	});
 
@@ -149,7 +143,7 @@ $(document).ready(function() {
 		var envName = selected_name();
 		var newEnvName = getAndClearVal($("#clone_environment :text"));
 		if (!confirm('Are you sure you want to create environment ' + newEnvName + ' as a clone of ' + envName + '?')) { return; }
-		$(this).siblings("img").click();    /* close the form */
+		$(this).siblings("a").click();    /* close the form */
 		$.ajax({
 			beforeSend: function(request) {request.setRequestHeader("Content-Location", envName)},
             type: "POST",
@@ -165,14 +159,14 @@ $(document).ready(function() {
 	});
 	
 
-	$('#add_application img').live("click", function() {
+	$('#add_application a').live("click", function() {
 			$(this).parent().siblings().toggle();
 	});
 
 	$('#add_application form').submit(function() {
 		var envName = selected_name();
 		var newAppName = getAndClearVal($("#add_application :text"));
-		$(this).siblings("img").click();    /* close the form */
+		$(this).siblings("a").click();    /* close the form */
 		$.ajax({
             type: "PUT",
             url: "/environments/" + envName + "/" + newAppName,
@@ -283,7 +277,7 @@ $(document).ready(function() {
 		var value = getAndClearVal($(this).children(".input-value"));
 		if (notDefined(envName) || notDefined(appName) || notDefined(key)) { alert("Unable to add key '" + key + "' to '" + envName + "':'" + appName + "'"); return; }
 		var item = jItem(this);
-		$(this).siblings("img").click();    /* close the form */
+		$(this).siblings("a").click();    /* close the form */
 
 	    $.ajax({
 	        type: "PUT",
