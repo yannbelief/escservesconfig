@@ -227,7 +227,8 @@ $(document).ready(function() {
 	        find: '.value', 
 	        editDone: function(newText, oldText, event, td) {
 	            if (newText == oldText) return;
-	            var key = td.siblings('td').text();
+	            var key = $.trim(td.siblings('td').text());
+				alert(key);
 	            $.ajax({
 	                type: 'PUT',
 	                url: '/environments/' + envName + '/' + appName + '/' + key,
