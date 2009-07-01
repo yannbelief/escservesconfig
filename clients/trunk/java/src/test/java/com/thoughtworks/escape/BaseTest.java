@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 import static org.junit.matchers.JUnitMatchers.*;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.httpclient.HttpClient;
@@ -17,6 +18,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -66,10 +68,22 @@ public class BaseTest {
 	}
 
 	protected void removeEnvironment(String environment) {
+		removeEnvironment(environment, null, null);
+	}
+
+	protected void removeEnvironment(String environment, String name, String password) {
 		try {
 			final String path = String.format("/%s/%s", ENVIRONMENTS_PATH, environment);
 			final HttpURL url = escapeUrlFor(path);
-			assertThat(new HttpClient().executeMethod(new DeleteMethod(url.toString())), is(200));
+			
+			HttpClient httpClient;
+			if (name != null && password != null) {
+				httpClient = authenticatedHttpClientFor(name, password);
+			} else {
+				httpClient = new HttpClient();
+			}
+			
+			assertThat(httpClient.executeMethod(new DeleteMethod(url.toString())), is(200));
 		} catch (IOException e) {
 			fail(e.toString());
 		}
@@ -80,7 +94,7 @@ public class BaseTest {
 			final String path = String.format("/%s/%s", "owner", environment);
 			final HttpURL url = escapeUrlFor(path);
 			HttpClient httpClient = authenticatedHttpClientFor(name, password);
-			assertThat(httpClient.executeMethod(new DeleteMethod(url.toString())), is(200));
+			assertThat(httpClient.executeMethod(new PostMethod(url.toString())), is(200));
 		} catch (IOException e) {
 			fail(e.toString());
 		}
@@ -96,16 +110,29 @@ public class BaseTest {
 		}
 	}
 
-	protected void removeApplication(String environment, String application) {
+	protected void removeApplication(String environment, String application, String name, String password) {
 		try {
 			final String path = String.format("/%s/%s/%s", ENVIRONMENTS_PATH, environment, application);
 			final HttpURL url = escapeUrlFor(path);
-			assertThat(new HttpClient().executeMethod(new DeleteMethod(url.toString())), either(is(200)).or(is(201)));
+			
+			HttpClient httpClient;
+			if (name != null && password != null) {
+				httpClient = authenticatedHttpClientFor(name, password);
+			} else {
+				httpClient = new HttpClient();
+			}
+			
+			assertThat(httpClient.executeMethod(new DeleteMethod(url.toString())), either(is(200)).or(is(201)));
+			
 		} catch (IOException e) {
 			fail(e.toString());
 		}
 	}
 
+	protected void removeApplication(String environment, String application) {
+		removeApplication(environment, application, null, null);
+	}
+	
 	protected void addProperty(String environment, String application, String key, String value) {
 		try {
 			final String path = String.format("/%s/%s/%s/%s", ENVIRONMENTS_PATH, environment, application, key);
@@ -146,11 +173,26 @@ public class BaseTest {
 		try {
 			final String path = String.format("/%s/%s/%s/%s", ENVIRONMENTS_PATH, environment, application, key);
 			final HttpURL url = escapeUrlFor(path);
-			url.setQuery("encrypted=true");
+			url.setQuery("encrypt");
 			HttpClient httpClient = authenticatedHttpClientFor(name, password);
 			PutMethod encryptPropertyMethod = new PutMethod(url.toString());
 			encryptPropertyMethod.setRequestEntity(new StringRequestEntity(value, "text/plain", "utf-8"));
 			assertThat(httpClient.executeMethod(encryptPropertyMethod), either(is(200)).or(is(201)));
+		} catch (IOException e) {
+			fail(e.toString());
+		}
+	}
+	
+	protected void savePrivateKey(String environment, String application, String name, String password, File privateKey) {
+		try {
+			final String path = String.format("/crypt/%s/private", environment);
+			final HttpURL url = escapeUrlFor(path);
+			HttpClient httpClient = authenticatedHttpClientFor(name, password);
+			GetMethod getPrivateKeyPropertyMethod = new GetMethod(url.toString());
+			assertThat(httpClient.executeMethod(getPrivateKeyPropertyMethod), either(is(200)).or(is(201)));
+			String privateKeyData = getPrivateKeyPropertyMethod.getResponseBodyAsString();
+			FileUtils.writeStringToFile(privateKey, privateKeyData);
+			
 		} catch (IOException e) {
 			fail(e.toString());
 		}

@@ -16,6 +16,7 @@
 
 package com.thoughtworks.escape;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -26,6 +27,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.configuration.Configuration;
+import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -49,6 +51,22 @@ public class EscapeConfiguration extends AbstractConfiguration {
 	private static final Pattern KEY_REGEX_PATTERN = Pattern.compile("^([^=]*).*$");
 
 	private final String baseUri;
+	private File privateKey;
+
+	/**
+	 * <p>Build a configuration from Escape by specifying the following arguments.</p>
+	 * 
+	 * @param host	the host where Escape is running
+	 * @param port	the port on which Escape is running
+	 * @param environment	the name of the environment
+	 * @param application	the name of the application
+	 * @param privateKey	the file containing the RSA private key to 
+	 * 						decrypt encrypted properties
+	 */
+	public EscapeConfiguration(String host, int port, String environment, String application, File privateKey) {
+		this(host, port, environment, application);
+		this.privateKey = privateKey;
+	}
 
 	/**
 	 * <p>Build a configuration from Escape by specifying the following arguments.</p>
@@ -114,17 +132,23 @@ public class EscapeConfiguration extends AbstractConfiguration {
 	 * @see org.apache.commons.configuration.Configuration#getProperty(java.lang.String)
 	 */
 	public Object getProperty(String key) {
-		GetMethod get = new GetMethod(baseUri + key);
+		GetMethod getPropertyMethod = new GetMethod(baseUri + key);
 		
 		try {
-			new HttpClient().executeMethod(get);
-			return new String(get.getResponseBody());
+			new HttpClient().executeMethod(getPropertyMethod);
+			String body = getPropertyMethod.getResponseBodyAsString();
+			
+			if (!isEncryptedProperty(getPropertyMethod) || privateKey == null) {
+				return body;
+			} else {
+				return new EscapeCrypter(privateKey).decrypt(body);
+			}
 			
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 
 		} finally {
-			get.releaseConnection();
+			getPropertyMethod.releaseConnection();
 		}
 	}
 
@@ -166,4 +190,14 @@ public class EscapeConfiguration extends AbstractConfiguration {
 		}
 	}
 
+	private boolean isEncryptedProperty(GetMethod getPropertyMethod) {
+		final Header encryptionContentType = new Header("Content-Type", "application/octet-stream");
+		final Header encryptionContentTransferEncoding = new Header("Content-Transfer-Encoding", "base64");
+		
+		Header contentType = getPropertyMethod.getResponseHeader("Content-Type");
+		Header contentTransferEncoding = getPropertyMethod.getResponseHeader("Content-Transfer-Encoding");
+		return (contentType.equals(encryptionContentType) && 
+				contentTransferEncoding.equals(encryptionContentTransferEncoding));
+	}
+	
 }

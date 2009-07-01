@@ -3,6 +3,7 @@ package com.thoughtworks.escape;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -71,23 +72,29 @@ public class EscapeConfigurationTest extends BaseTest {
 		final String password =  "joe";
 		final String key =  "secret";
 		final String value =  "secret";
+		final File tmpDir = new File("target", "tmp");
+		tmpDir.mkdirs();
+		File privateKey = new File(tmpDir, "private_key.pem");
 		
 		addEnvironment(environment);
 		addUser(user, password);
-		ownEnvironment(environment, user, password);
 		addApplication(environment, application);
 		addProperty(environment, application, key, value);
-
+		ownEnvironment(environment, user, password);
+		savePrivateKey(environment, application, user, password, privateKey);
+		
 		EscapeConfiguration configuration = new EscapeConfiguration(
-				"localhost", 7000, environment, application);
+				"localhost", 7000, environment, application, privateKey);
 
 		assertThat(configuration.getString(key), is(value));
 		addEncryptedProperty(environment, application, key, value, user, password);
-		assertThat(configuration.getString(key), is(not(value)));
-		
-		removeApplication(environment, application);
+
+		assertThat(configuration.getString(key), is(value));
+
+		removeApplication(environment, application, user, password);
 		removeApplication(DEFAULT_ENVIRONMENT, application);
+		removeEnvironment(environment, user, password);
 		removeUser(user, password);
-		removeEnvironment(environment);
 	}
+	
 }

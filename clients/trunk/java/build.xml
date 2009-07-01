@@ -84,6 +84,7 @@
                 <attribute name="Svn-Revision" value="${svn.revision}"/>
                 <attribute name="Svn-Url" value="${svn.url}"/>
             </manifest>
+        	<zipgroupfileset dir="${lib.dir}/runtime" includes="not-yet-commons-ssl*.jar"/>
         </jar>
     	
     	<jar destfile="${dist.dir}/${ant.project.name}-${version}-with-dependencies.jar" compress="true" >

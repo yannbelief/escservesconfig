@@ -32,7 +32,6 @@ public class ClientTest extends BaseTest {
 
 	@Test
 	public void testCanGetPropertiesFromEscapeServer() throws IOException {
-		System.out.println(baseUrl);
 		Properties properties = Client.getProperties(baseUrl, DEFAULT_ENVIRONMENT, EXAMPLE_APPLICATION);
 
 		assertTrue(properties.containsKey("key1"));
