@@ -28,7 +28,7 @@ import org.junit.Test;
 
 public class ClientTest extends BaseTest {
 	
-	private final String baseUrl = escapeUrlFor("/").toString();
+	private final String baseUrl = ESCAPE.escapeUrlFor("/").toString();
 
 	@Test
 	public void testCanGetPropertiesFromEscapeServer() throws IOException {

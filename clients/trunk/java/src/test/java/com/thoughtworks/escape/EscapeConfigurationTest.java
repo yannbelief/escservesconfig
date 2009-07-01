@@ -76,27 +76,27 @@ public class EscapeConfigurationTest extends BaseTest {
 		tmpDir.mkdirs();
 		File privateKey = new File(tmpDir, "private_key.pem");
 		
-		addEnvironment(environment);
-		addUser(user, password);
-		addApplication(environment, application);
-		addProperty(environment, application, key, value);
-		ownEnvironment(environment, user, password);
-		savePrivateKey(environment, application, user, password, privateKey);
+		ESCAPE.addEnvironment(environment);
+		ESCAPE.addUser(user, password);
+		ESCAPE.addApplication(environment, application);
+		ESCAPE.addProperty(environment, application, key, value);
+		ESCAPE.ownEnvironment(environment, user, password);
+		ESCAPE.savePrivateKey(environment, application, user, password, privateKey);
 		
 		assertThat(new EscapeConfiguration("localhost", 7000, environment, application).getString(key), 
 				is(value));
 		
-		addEncryptedProperty(environment, application, key, value, user, password);
+		ESCAPE.addEncryptedProperty(environment, application, key, value, user, password);
 
 		assertThat(new EscapeConfiguration("localhost", 7000, environment, application).getString(key), 
 				is(not(value)));
 		assertThat(new EscapeConfiguration("localhost", 7000, environment, application, privateKey).getString(key), 
 				is(value));
 
-		removeApplication(environment, application, user, password);
-		removeApplication(DEFAULT_ENVIRONMENT, application);
-		removeEnvironment(environment, user, password);
-		removeUser(user, password);
+		ESCAPE.removeApplication(environment, application, user, password);
+		ESCAPE.removeApplication(DEFAULT_ENVIRONMENT, application);
+		ESCAPE.removeEnvironment(environment, user, password);
+		ESCAPE.removeUser(user, password);
 	}
 	
 }
