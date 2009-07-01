@@ -83,13 +83,15 @@ public class EscapeConfigurationTest extends BaseTest {
 		ownEnvironment(environment, user, password);
 		savePrivateKey(environment, application, user, password, privateKey);
 		
-		EscapeConfiguration configuration = new EscapeConfiguration(
-				"localhost", 7000, environment, application, privateKey);
-
-		assertThat(configuration.getString(key), is(value));
+		assertThat(new EscapeConfiguration("localhost", 7000, environment, application).getString(key), 
+				is(value));
+		
 		addEncryptedProperty(environment, application, key, value, user, password);
 
-		assertThat(configuration.getString(key), is(value));
+		assertThat(new EscapeConfiguration("localhost", 7000, environment, application).getString(key), 
+				is(not(value)));
+		assertThat(new EscapeConfiguration("localhost", 7000, environment, application, privateKey).getString(key), 
+				is(value));
 
 		removeApplication(environment, application, user, password);
 		removeApplication(DEFAULT_ENVIRONMENT, application);
