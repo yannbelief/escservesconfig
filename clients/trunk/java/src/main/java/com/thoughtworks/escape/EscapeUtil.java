@@ -1,11 +1,8 @@
 package com.thoughtworks.escape;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
-import static org.junit.matchers.JUnitMatchers.*;
-
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpState;
@@ -36,7 +33,8 @@ public class EscapeUtil {
 		final String path = String.format("/%s", ENVIRONMENTS_PATH);
 		final HttpURL url = escapeUrlFor(path);
 		try {
-			assertThat(new HttpClient().executeMethod(new GetMethod(url.toString())), is(200));
+			int statusCode = new HttpClient().executeMethod(new GetMethod(url.toString()));
+			checkStatusCodeIsEither(statusCode, 200);
 		} catch (IOException e) {
 			throw new EscapeException("Can't connect to Escape server at url [%s] --> " +
 					"make sure that Escape is running", url.toString());
@@ -47,7 +45,8 @@ public class EscapeUtil {
 		try {
 			final String path = String.format("/%s/%s", ENVIRONMENTS_PATH, environment);
 			final HttpURL url = escapeUrlFor(path);
-			assertThat(new HttpClient().executeMethod(new PutMethod(url.toString())), either(is(200)).or(is(201)));
+			int statusCode = new HttpClient().executeMethod(new PutMethod(url.toString()));
+			checkStatusCodeIsEither(statusCode, 200, 201);
 		} catch (IOException e) {
 			throw new EscapeException(e);
 		}
@@ -69,7 +68,8 @@ public class EscapeUtil {
 				httpClient = new HttpClient();
 			}
 			
-			assertThat(httpClient.executeMethod(new DeleteMethod(url.toString())), is(200));
+			int statusCode = httpClient.executeMethod(new DeleteMethod(url.toString()));
+			checkStatusCodeIsEither(statusCode, 200);
 		} catch (IOException e) {
 			throw new EscapeException(e);
 		}
@@ -80,7 +80,8 @@ public class EscapeUtil {
 			final String path = String.format("/%s/%s", "owner", environment);
 			final HttpURL url = escapeUrlFor(path);
 			HttpClient httpClient = authenticatedHttpClientFor(name, password);
-			assertThat(httpClient.executeMethod(new PostMethod(url.toString())), is(200));
+			int statusCode = httpClient.executeMethod(new PostMethod(url.toString()));
+			checkStatusCodeIsEither(statusCode, 200);
 		} catch (IOException e) {
 			throw new EscapeException(e);
 		}
@@ -90,7 +91,8 @@ public class EscapeUtil {
 		try {
 			final String path = String.format("/%s/%s/%s", ENVIRONMENTS_PATH, environment, application);
 			final HttpURL url = escapeUrlFor(path);
-			assertThat(new HttpClient().executeMethod(new PutMethod(url.toString())), either(is(200)).or(is(201)));
+			int statusCode = new HttpClient().executeMethod(new PutMethod(url.toString()));
+			checkStatusCodeIsEither(statusCode, 200, 201);
 		} catch (IOException e) {
 			throw new EscapeException(e);
 		}
@@ -108,7 +110,8 @@ public class EscapeUtil {
 				httpClient = new HttpClient();
 			}
 			
-			assertThat(httpClient.executeMethod(new DeleteMethod(url.toString())), either(is(200)).or(is(201)));
+			int statusCode = httpClient.executeMethod(new DeleteMethod(url.toString()));
+			checkStatusCodeIsEither(statusCode, 200, 201);
 			
 		} catch (IOException e) {
 			throw new EscapeException(e);
@@ -125,7 +128,8 @@ public class EscapeUtil {
 			final HttpURL url = escapeUrlFor(path);
 			PutMethod addPropertyMethod = new PutMethod(url.toString());
 			addPropertyMethod.setRequestEntity(new StringRequestEntity(value, "text/plain", "utf-8"));
-			assertThat(new HttpClient().executeMethod(addPropertyMethod), either(is(200)).or(is(201)));
+			int statusCode = new HttpClient().executeMethod(addPropertyMethod);
+			checkStatusCodeIsEither(statusCode, 200, 201);
 		} catch (IOException e) {
 			throw new EscapeException(e);
 		}
@@ -138,7 +142,8 @@ public class EscapeUtil {
 			PostMethod addUserMethod = new PostMethod(url.toString());
 			addUserMethod.setParameter("password", password);
 			addUserMethod.setParameter("email", "joe@tw.com");
-			assertThat(new HttpClient().executeMethod(addUserMethod), is(201));
+			int statusCode = new HttpClient().executeMethod(addUserMethod);
+			checkStatusCodeIsEither(statusCode, 201);
 		} catch (IOException e) {
 			throw new EscapeException(e);
 		}
@@ -149,7 +154,8 @@ public class EscapeUtil {
 			final String path = String.format("/user/%s", name);
 			final HttpURL url = escapeUrlFor(path);
 			HttpClient httpClient = authenticatedHttpClientFor(name, password);
-			assertThat(httpClient.executeMethod(new DeleteMethod(url.toString())), is(200));
+			int statusCode = httpClient.executeMethod(new DeleteMethod(url.toString()));
+			checkStatusCodeIsEither(statusCode, 200);
 		} catch (IOException e) {
 			throw new EscapeException(e);
 		}
@@ -163,7 +169,8 @@ public class EscapeUtil {
 			HttpClient httpClient = authenticatedHttpClientFor(name, password);
 			PutMethod encryptPropertyMethod = new PutMethod(url.toString());
 			encryptPropertyMethod.setRequestEntity(new StringRequestEntity(value, "text/plain", "utf-8"));
-			assertThat(httpClient.executeMethod(encryptPropertyMethod), either(is(200)).or(is(201)));
+			int statusCode = httpClient.executeMethod(encryptPropertyMethod);
+			checkStatusCodeIsEither(statusCode, 200, 201);
 		} catch (IOException e) {
 			throw new EscapeException(e);
 		}
@@ -175,7 +182,8 @@ public class EscapeUtil {
 			final HttpURL url = escapeUrlFor(path);
 			HttpClient httpClient = authenticatedHttpClientFor(name, password);
 			GetMethod getPrivateKeyPropertyMethod = new GetMethod(url.toString());
-			assertThat(httpClient.executeMethod(getPrivateKeyPropertyMethod), either(is(200)).or(is(201)));
+			int statusCode = httpClient.executeMethod(getPrivateKeyPropertyMethod);
+			checkStatusCodeIsEither(statusCode, 200, 201);
 			String privateKeyData = getPrivateKeyPropertyMethod.getResponseBodyAsString();
 			FileUtils.writeStringToFile(privateKey, privateKeyData);
 			
@@ -199,6 +207,22 @@ public class EscapeUtil {
 				new UsernamePasswordCredentials(name, password));
 		httpClient.setState(httpState);
 		return httpClient;
+	}
+	
+	private static void checkStatusCodeIsEither(int statusCode, int... expectedCodes) {
+		boolean isOK = false;
+		
+		for (int expectedCode : expectedCodes) {
+			if (statusCode == expectedCode) {
+				isOK = true;
+				break;
+			}
+		}
+		
+		if (!isOK) {
+			throw new EscapeException("returned status code didn't match expectation of one of %s", 
+					Arrays.asList(expectedCodes));
+		}
 	}
 
 }

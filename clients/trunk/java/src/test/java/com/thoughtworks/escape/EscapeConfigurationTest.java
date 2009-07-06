@@ -66,8 +66,6 @@ public class EscapeConfigurationTest extends BaseTest {
 	
 	@Test
 	public void shouldDecryptEncryptedPropertiesAutomatically() throws Exception {
-		final String host = "localhost";
-		final int port = 7000;
 		final String environment =  "joes";
 		final String application =  "myapp";
 		final String user =  "joe";
@@ -86,14 +84,14 @@ public class EscapeConfigurationTest extends BaseTest {
 			ESCAPE.ownEnvironment(environment, user, password);
 			ESCAPE.savePrivateKey(environment, application, user, password, privateKey);
 			
-			assertThat(new EscapeConfiguration(host, port, environment, application).getString(key), 
+			assertThat(new EscapeConfiguration(HOST, PORT, environment, application).getString(key), 
 					is(value));
 			
 			ESCAPE.addEncryptedProperty(environment, application, key, value, user, password);
 
-			assertThat(new EscapeConfiguration(host, port, environment, application).getString(key), 
+			assertThat(new EscapeConfiguration(HOST, PORT, environment, application).getString(key), 
 					is(not(value)));
-			assertThat(new EscapeConfiguration(host, port, environment, application, privateKey).getString(key), 
+			assertThat(new EscapeConfiguration(HOST, PORT, environment, application, privateKey).getString(key), 
 					is(value));
 
 			ESCAPE.removeApplication(environment, application, user, password);
