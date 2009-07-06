@@ -21,8 +21,8 @@ public class EscapeUtil {
 
 	private static final String ENVIRONMENTS_PATH = "environments";
 
-	private final String host;
-	private final int port;
+	final private String host;
+	final private int port;
 	
 	public EscapeUtil(String host, int port) {
 		this.host = host;
@@ -34,7 +34,7 @@ public class EscapeUtil {
 		final HttpURL url = escapeUrlFor(path);
 		try {
 			int statusCode = new HttpClient().executeMethod(new GetMethod(url.toString()));
-			checkStatusCodeIsEither(statusCode, 200);
+			checkStatusCodeIsOneOf(statusCode, 200);
 		} catch (IOException e) {
 			throw new EscapeException("Can't connect to Escape server at url [%s] --> " +
 					"make sure that Escape is running", url.toString());
@@ -46,7 +46,7 @@ public class EscapeUtil {
 			final String path = String.format("/%s/%s", ENVIRONMENTS_PATH, environment);
 			final HttpURL url = escapeUrlFor(path);
 			int statusCode = new HttpClient().executeMethod(new PutMethod(url.toString()));
-			checkStatusCodeIsEither(statusCode, 200, 201);
+			checkStatusCodeIsOneOf(statusCode, 200, 201);
 		} catch (IOException e) {
 			throw new EscapeException(e);
 		}
@@ -56,32 +56,32 @@ public class EscapeUtil {
 		removeEnvironment(environment, null, null);
 	}
 
-	public void removeEnvironment(String environment, String name, String password) {
+	public void removeEnvironment(String environment, String user, String password) {
 		try {
 			final String path = String.format("/%s/%s", ENVIRONMENTS_PATH, environment);
 			final HttpURL url = escapeUrlFor(path);
 			
 			HttpClient httpClient;
-			if (name != null && password != null) {
-				httpClient = authenticatedHttpClientFor(name, password);
+			if (user != null && password != null) {
+				httpClient = authenticatedHttpClientFor(user, password);
 			} else {
 				httpClient = new HttpClient();
 			}
 			
 			int statusCode = httpClient.executeMethod(new DeleteMethod(url.toString()));
-			checkStatusCodeIsEither(statusCode, 200);
+			checkStatusCodeIsOneOf(statusCode, 200);
 		} catch (IOException e) {
 			throw new EscapeException(e);
 		}
 	}
 
-	public void ownEnvironment(String environment, String name, String password) {
+	public void ownEnvironment(String environment, String user, String password) {
 		try {
 			final String path = String.format("/%s/%s", "owner", environment);
 			final HttpURL url = escapeUrlFor(path);
-			HttpClient httpClient = authenticatedHttpClientFor(name, password);
+			HttpClient httpClient = authenticatedHttpClientFor(user, password);
 			int statusCode = httpClient.executeMethod(new PostMethod(url.toString()));
-			checkStatusCodeIsEither(statusCode, 200);
+			checkStatusCodeIsOneOf(statusCode, 200);
 		} catch (IOException e) {
 			throw new EscapeException(e);
 		}
@@ -92,26 +92,26 @@ public class EscapeUtil {
 			final String path = String.format("/%s/%s/%s", ENVIRONMENTS_PATH, environment, application);
 			final HttpURL url = escapeUrlFor(path);
 			int statusCode = new HttpClient().executeMethod(new PutMethod(url.toString()));
-			checkStatusCodeIsEither(statusCode, 200, 201);
+			checkStatusCodeIsOneOf(statusCode, 200, 201);
 		} catch (IOException e) {
 			throw new EscapeException(e);
 		}
 	}
 
-	public void removeApplication(String environment, String application, String name, String password) {
+	public void removeApplication(String environment, String application, String user, String password) {
 		try {
 			final String path = String.format("/%s/%s/%s", ENVIRONMENTS_PATH, environment, application);
 			final HttpURL url = escapeUrlFor(path);
 			
 			HttpClient httpClient;
-			if (name != null && password != null) {
-				httpClient = authenticatedHttpClientFor(name, password);
+			if (user != null && password != null) {
+				httpClient = authenticatedHttpClientFor(user, password);
 			} else {
 				httpClient = new HttpClient();
 			}
 			
 			int statusCode = httpClient.executeMethod(new DeleteMethod(url.toString()));
-			checkStatusCodeIsEither(statusCode, 200, 201);
+			checkStatusCodeIsOneOf(statusCode, 200, 201);
 			
 		} catch (IOException e) {
 			throw new EscapeException(e);
@@ -129,61 +129,61 @@ public class EscapeUtil {
 			PutMethod addPropertyMethod = new PutMethod(url.toString());
 			addPropertyMethod.setRequestEntity(new StringRequestEntity(value, "text/plain", "utf-8"));
 			int statusCode = new HttpClient().executeMethod(addPropertyMethod);
-			checkStatusCodeIsEither(statusCode, 200, 201);
+			checkStatusCodeIsOneOf(statusCode, 200, 201);
 		} catch (IOException e) {
 			throw new EscapeException(e);
 		}
 	}
 	
-	public void addUser(String name, String password) {
+	public void addUser(String user, String password) {
 		try {
-			final String path = String.format("/user/%s", name);
+			final String path = String.format("/user/%s", user);
 			final HttpURL url = escapeUrlFor(path);
 			PostMethod addUserMethod = new PostMethod(url.toString());
 			addUserMethod.setParameter("password", password);
 			addUserMethod.setParameter("email", "joe@tw.com");
 			int statusCode = new HttpClient().executeMethod(addUserMethod);
-			checkStatusCodeIsEither(statusCode, 201);
+			checkStatusCodeIsOneOf(statusCode, 201);
 		} catch (IOException e) {
 			throw new EscapeException(e);
 		}
 	}
 
-	public void removeUser(String name, String password) {
+	public void removeUser(String user, String password) {
 		try {
-			final String path = String.format("/user/%s", name);
+			final String path = String.format("/user/%s", user);
 			final HttpURL url = escapeUrlFor(path);
-			HttpClient httpClient = authenticatedHttpClientFor(name, password);
+			HttpClient httpClient = authenticatedHttpClientFor(user, password);
 			int statusCode = httpClient.executeMethod(new DeleteMethod(url.toString()));
-			checkStatusCodeIsEither(statusCode, 200);
+			checkStatusCodeIsOneOf(statusCode, 200);
 		} catch (IOException e) {
 			throw new EscapeException(e);
 		}
 	}
 	
-	public void addEncryptedProperty(String environment, String application, String key, String value, String name, String password) {
+	public void addEncryptedProperty(String environment, String application, String key, String value, String user, String password) {
 		try {
 			final String path = String.format("/%s/%s/%s/%s", ENVIRONMENTS_PATH, environment, application, key);
 			final HttpURL url = escapeUrlFor(path);
 			url.setQuery("encrypt");
-			HttpClient httpClient = authenticatedHttpClientFor(name, password);
+			HttpClient httpClient = authenticatedHttpClientFor(user, password);
 			PutMethod encryptPropertyMethod = new PutMethod(url.toString());
 			encryptPropertyMethod.setRequestEntity(new StringRequestEntity(value, "text/plain", "utf-8"));
 			int statusCode = httpClient.executeMethod(encryptPropertyMethod);
-			checkStatusCodeIsEither(statusCode, 200, 201);
+			checkStatusCodeIsOneOf(statusCode, 200, 201);
 		} catch (IOException e) {
 			throw new EscapeException(e);
 		}
 	}
 	
-	public void savePrivateKey(String environment, String application, String name, String password, File privateKey) {
+	public void savePrivateKey(String environment, String application, String user, String password, File privateKey) {
 		try {
 			final String path = String.format("/crypt/%s/private", environment);
 			final HttpURL url = escapeUrlFor(path);
-			HttpClient httpClient = authenticatedHttpClientFor(name, password);
+			HttpClient httpClient = authenticatedHttpClientFor(user, password);
 			GetMethod getPrivateKeyPropertyMethod = new GetMethod(url.toString());
 			int statusCode = httpClient.executeMethod(getPrivateKeyPropertyMethod);
-			checkStatusCodeIsEither(statusCode, 200, 201);
+			checkStatusCodeIsOneOf(statusCode, 200, 201);
 			String privateKeyData = getPrivateKeyPropertyMethod.getResponseBodyAsString();
 			FileUtils.writeStringToFile(privateKey, privateKeyData);
 			
@@ -200,16 +200,16 @@ public class EscapeUtil {
 		}
 	}
 
-	private static HttpClient authenticatedHttpClientFor(String name, String password) {
+	private HttpClient authenticatedHttpClientFor(String user, String password) {
 		HttpClient httpClient = new HttpClient();
 		HttpState httpState = new HttpState();
-		httpState.setCredentials(new AuthScope("localhost", 7000), 
-				new UsernamePasswordCredentials(name, password));
+		httpState.setCredentials(new AuthScope(host, port), 
+				new UsernamePasswordCredentials(user, password));
 		httpClient.setState(httpState);
 		return httpClient;
 	}
 	
-	private static void checkStatusCodeIsEither(int statusCode, int... expectedCodes) {
+	private static void checkStatusCodeIsOneOf(int statusCode, int... expectedCodes) {
 		boolean isOK = false;
 		
 		for (int expectedCode : expectedCodes) {
