@@ -38,8 +38,8 @@ public class EscapeUtil {
 		try {
 			assertThat(new HttpClient().executeMethod(new GetMethod(url.toString())), is(200));
 		} catch (IOException e) {
-			fail(String.format("Can't connect to Escape server at url [%s] --> " +
-					"make sure that Escape is running", url.toString()));
+			throw new EscapeException("Can't connect to Escape server at url [%s] --> " +
+					"make sure that Escape is running", url.toString());
 		}
 	}
 
@@ -49,7 +49,7 @@ public class EscapeUtil {
 			final HttpURL url = escapeUrlFor(path);
 			assertThat(new HttpClient().executeMethod(new PutMethod(url.toString())), either(is(200)).or(is(201)));
 		} catch (IOException e) {
-			fail(e.toString());
+			throw new EscapeException(e);
 		}
 	}
 
@@ -71,7 +71,7 @@ public class EscapeUtil {
 			
 			assertThat(httpClient.executeMethod(new DeleteMethod(url.toString())), is(200));
 		} catch (IOException e) {
-			fail(e.toString());
+			throw new EscapeException(e);
 		}
 	}
 
@@ -82,7 +82,7 @@ public class EscapeUtil {
 			HttpClient httpClient = authenticatedHttpClientFor(name, password);
 			assertThat(httpClient.executeMethod(new PostMethod(url.toString())), is(200));
 		} catch (IOException e) {
-			fail(e.toString());
+			throw new EscapeException(e);
 		}
 	}
 
@@ -92,7 +92,7 @@ public class EscapeUtil {
 			final HttpURL url = escapeUrlFor(path);
 			assertThat(new HttpClient().executeMethod(new PutMethod(url.toString())), either(is(200)).or(is(201)));
 		} catch (IOException e) {
-			fail(e.toString());
+			throw new EscapeException(e);
 		}
 	}
 
@@ -111,7 +111,7 @@ public class EscapeUtil {
 			assertThat(httpClient.executeMethod(new DeleteMethod(url.toString())), either(is(200)).or(is(201)));
 			
 		} catch (IOException e) {
-			fail(e.toString());
+			throw new EscapeException(e);
 		}
 	}
 
@@ -127,7 +127,7 @@ public class EscapeUtil {
 			addPropertyMethod.setRequestEntity(new StringRequestEntity(value, "text/plain", "utf-8"));
 			assertThat(new HttpClient().executeMethod(addPropertyMethod), either(is(200)).or(is(201)));
 		} catch (IOException e) {
-			fail(e.toString());
+			throw new EscapeException(e);
 		}
 	}
 	
@@ -140,7 +140,7 @@ public class EscapeUtil {
 			addUserMethod.setParameter("email", "joe@tw.com");
 			assertThat(new HttpClient().executeMethod(addUserMethod), is(201));
 		} catch (IOException e) {
-			fail(e.toString());
+			throw new EscapeException(e);
 		}
 	}
 
@@ -151,7 +151,7 @@ public class EscapeUtil {
 			HttpClient httpClient = authenticatedHttpClientFor(name, password);
 			assertThat(httpClient.executeMethod(new DeleteMethod(url.toString())), is(200));
 		} catch (IOException e) {
-			fail(e.toString());
+			throw new EscapeException(e);
 		}
 	}
 	
@@ -165,7 +165,7 @@ public class EscapeUtil {
 			encryptPropertyMethod.setRequestEntity(new StringRequestEntity(value, "text/plain", "utf-8"));
 			assertThat(httpClient.executeMethod(encryptPropertyMethod), either(is(200)).or(is(201)));
 		} catch (IOException e) {
-			fail(e.toString());
+			throw new EscapeException(e);
 		}
 	}
 	
@@ -180,7 +180,7 @@ public class EscapeUtil {
 			FileUtils.writeStringToFile(privateKey, privateKeyData);
 			
 		} catch (IOException e) {
-			fail(e.toString());
+			throw new EscapeException(e);
 		}
 	}
 

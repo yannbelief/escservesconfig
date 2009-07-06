@@ -66,6 +66,8 @@ public class EscapeConfigurationTest extends BaseTest {
 	
 	@Test
 	public void shouldDecryptEncryptedPropertiesAutomatically() throws Exception {
+		final String host = "localhost";
+		final int port = 7000;
 		final String environment =  "joes";
 		final String application =  "myapp";
 		final String user =  "joe";
@@ -76,27 +78,32 @@ public class EscapeConfigurationTest extends BaseTest {
 		tmpDir.mkdirs();
 		File privateKey = new File(tmpDir, "private_key.pem");
 		
-		ESCAPE.addEnvironment(environment);
-		ESCAPE.addUser(user, password);
-		ESCAPE.addApplication(environment, application);
-		ESCAPE.addProperty(environment, application, key, value);
-		ESCAPE.ownEnvironment(environment, user, password);
-		ESCAPE.savePrivateKey(environment, application, user, password, privateKey);
-		
-		assertThat(new EscapeConfiguration("localhost", 7000, environment, application).getString(key), 
-				is(value));
-		
-		ESCAPE.addEncryptedProperty(environment, application, key, value, user, password);
+		try {
+			ESCAPE.addEnvironment(environment);
+			ESCAPE.addUser(user, password);
+			ESCAPE.addApplication(environment, application);
+			ESCAPE.addProperty(environment, application, key, value);
+			ESCAPE.ownEnvironment(environment, user, password);
+			ESCAPE.savePrivateKey(environment, application, user, password, privateKey);
+			
+			assertThat(new EscapeConfiguration(host, port, environment, application).getString(key), 
+					is(value));
+			
+			ESCAPE.addEncryptedProperty(environment, application, key, value, user, password);
 
-		assertThat(new EscapeConfiguration("localhost", 7000, environment, application).getString(key), 
-				is(not(value)));
-		assertThat(new EscapeConfiguration("localhost", 7000, environment, application, privateKey).getString(key), 
-				is(value));
+			assertThat(new EscapeConfiguration(host, port, environment, application).getString(key), 
+					is(not(value)));
+			assertThat(new EscapeConfiguration(host, port, environment, application, privateKey).getString(key), 
+					is(value));
 
-		ESCAPE.removeApplication(environment, application, user, password);
-		ESCAPE.removeApplication(DEFAULT_ENVIRONMENT, application);
-		ESCAPE.removeEnvironment(environment, user, password);
-		ESCAPE.removeUser(user, password);
+			ESCAPE.removeApplication(environment, application, user, password);
+			ESCAPE.removeApplication(DEFAULT_ENVIRONMENT, application);
+			ESCAPE.removeEnvironment(environment, user, password);
+			ESCAPE.removeUser(user, password);
+			
+		} catch (EscapeException e) {
+			fail(e.toString());
+		}
 	}
 	
 }
