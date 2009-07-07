@@ -42,9 +42,17 @@ import org.apache.commons.io.IOUtils;
  * <p>Typical use:</p>
  * 
  * <pre>
- * EscapeConfiguration configuration = new EscapeConfiguration("escape-host", 7000, "my_environment", "my_application");
+ * EscapeConfiguration configuration = new EscapeConfiguration("escape-host", 7000, 
+ *     "my_environment", "my_application");
  * String myProperty = configuration.getString("my.property");</pre>
  * 
+ * <p>If some of the properties have been encrypted, use the alternate constructor
+ * with support for RSA decryption using a 512 bit private key (PEM format)</p>
+ * 
+ * <pre>
+ * EscapeConfiguration configuration = new EscapeConfiguration("escape-host", 7000, 
+ *     "my_environment", "my_application", new File("/path/to/private_key.pem"));
+ * String myProperty = configuration.getString("my.encrypted.property");</pre>
  */
 public class EscapeConfiguration extends AbstractConfiguration {
 
@@ -54,7 +62,8 @@ public class EscapeConfiguration extends AbstractConfiguration {
 	private File privateKey;
 
 	/**
-	 * <p>Build a configuration from Escape by specifying the following arguments.</p>
+	 * <p>Build a configuration from Escape with support for decrypting 
+	 * RSA encrypted properties with the provided 512 bit private key.</p>
 	 * 
 	 * @param host	the host where Escape is running
 	 * @param port	the port on which Escape is running
