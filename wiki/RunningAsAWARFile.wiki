@@ -1,0 +1,22 @@
+#summary How to get Escape running as a .war file under Your Favourite Servlet Container
+
+= Running as a .war file =
+
+It's now possible to deploy Escape as a .war file. The API is fully working, but the UI is broken. We're working on it.
+
+= Installation Steps =
+
+*Note:* This has been tested on Glassfish v3, Jetty and Apache Tomcat.
+
+ # Create an empty database for Escape in the RDBMS of your choice. I've only tested MySQL so far
+ # Create a user for your database that has admin access
+ # Create the .war by running _warbler_ in the source root directory
+ # Copy the esc-server.war file to the webapps directory of your container.
+ # Ensure the JDBC driver for your database is in the class path of your container. 
+ # Create the file _~/.escape/config_ and put your JDBC connection string in there. Here's mine: 
+
+{{{
+--- 
+    jdbc.url: jdbc:mysql://localhost/escape?user=escape&password=escape
+
+}}}
