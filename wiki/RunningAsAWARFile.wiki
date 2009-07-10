@@ -4,9 +4,9 @@
 
 It's now possible to deploy Escape as a .war file. The API is fully working, but the UI is broken. We're working on it.
 
-= Installation Steps =
+== Installation Steps ==
 
-*Note:* This has been tested on Glassfish v3, Jetty and Apache Tomcat.
+*Note:* This has been tested on Glassfish v3, Jetty and Apache Tomcat. For Jetty and Tomcat the war file must be expanded for this to work.
 
  # Create an empty database for Escape in the RDBMS of your choice. I've only tested MySQL so far
  # Create a user for your database that has admin access
@@ -20,3 +20,23 @@ It's now possible to deploy Escape as a .war file. The API is fully working, but
     jdbc.url: jdbc:mysql://localhost/escape?user=escape&password=escape
 
 }}}
+
+== Root Context ==
+
+For the app to work correctly, it needs to be deployed to the root context of your container. Here's we'll explain how to do it (for the containers we've tested it on at least).
+
+=== Glassfish ===
+
+Deploy the war file with the following command:
+
+{{{
+asadmin deploy --contextroot / esc-server.war
+}}}
+
+
+=== Tomcat ===
+
+ # Rename your _webapps/ROOT_ directory to something else, or delete it
+ # Expand the esc-server.war file in to the _webapps/ROOT_ directory
+
+=== Jetty ===
