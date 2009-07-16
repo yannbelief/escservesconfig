@@ -1,4 +1,5 @@
 #summary How to get Escape running as a .war file under Your Favourite Servlet Container
+#labels Featured
 
 = Running as a .war file =
 
