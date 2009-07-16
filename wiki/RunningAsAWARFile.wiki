@@ -31,14 +31,14 @@ For the app to work correctly, it needs to be deployed to the root context of yo
 Deploy the war file with the following command:
 
 {{{
-asadmin deploy --contextroot / esc-server.war
+asadmin deploy --contextroot / escape.war
 }}}
 
 
 === Tomcat ===
 
  # Rename your _webapps/ROOT_ directory to something else, or delete it
- # Expand the esc-server.war file in to the _webapps/ROOT_ directory
+ # Expand the escape.war file in to the _webapps/ROOT_ directory
 
 === Jetty ===
 
