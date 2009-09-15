@@ -12,33 +12,17 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/test/junit-4.4.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/test/commons-httpclient-3.1.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/test/commons-logging-1.1.1.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/runtime/commons-logging-1.1.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/build/svnClientAdapter.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/runtime/commons-io-1.4.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/runtime/commons-collections-3.2.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/build/svnant.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/runtime/commons-configuration-1.6-sources.jar!/" />
           <root url="jar://$MODULE_DIR$/lib/test/commons-codec-1.3.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/runtime/commons-configuration-1.6.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/runtime/commons-lang-2.4.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/runtime/commons-httpclient-3.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/runtime/not-yet-commons-ssl-0.3.10.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
